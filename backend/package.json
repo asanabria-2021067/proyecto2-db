@@ -1,0 +1,11 @@
+{
+  "name": "db-project",
+  "version": "1.0.0",
+  "description": "Backend in Express JS for db-project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Angel Sanabria",
+  "license": "ISC"
+}
