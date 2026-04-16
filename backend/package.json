@@ -2,10 +2,11 @@
   "name": "db-project",
   "version": "1.0.0",
   "description": "Backend in Express JS for db-project",
-  "main": "index.js",
+  "main": "index.ts",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.ts"
   },
   "author": "Angel Sanabria",
   "license": "ISC",
@@ -13,7 +14,13 @@
     "body-parser": "^2.2.2",
     "express": "^5.2.1",
     "morgan": "^1.10.1",
-    "nodemon": "^3.1.14",
     "pg": "^8.20.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.6.0",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
   }
 }
