@@ -1,14 +1,42 @@
 services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: proy2
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: tienda_libros
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U proy2 -d tienda_libros"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "3000:3001"
+      - "3000:3000"
     volumes:
       - ./backend:/app
+      - /app/node_modules
     environment:
       - NODE_ENV=development
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=proy2
+      - DB_PASSWORD=secret
+      - DB_NAME=tienda_libros
+      - JWT_SECRET=mi_secreto_jwt_super_seguro_2024
+      - PORT=3000
+    depends_on:
+      db:
+        condition: service_healthy
     command: npm run dev
 
   frontend:
@@ -16,9 +44,16 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "8080:8081"
+      - "5173:5173"
     volumes:
       - ./frontend:/app
+      - /app/node_modules
     environment:
       - NODE_ENV=development
+      - BACKEND_URL=http://backend:3000
+    depends_on:
+      - backend
     command: npm run dev
+
+volumes:
+  pgdata:
