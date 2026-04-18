@@ -6,12 +6,15 @@ import { useRoute } from 'vue-router'
 
 const auth = useAuthStore()
 const route = useRoute()
+
+const isLanding = () => route.path === '/'
+const showNavbar = () => !isLanding()
 </script>
 
 <template>
   <Toaster position="top-right" :duration="3000" />
-  <Navbar v-if="auth.isLoggedIn && route.path !== '/'" />
-  <main :class="route.path === '/' ? '' : 'mx-auto max-w-7xl px-4 py-6 sm:px-6'">
+  <Navbar v-if="showNavbar()" />
+  <main :class="isLanding() ? '' : 'mx-auto max-w-7xl px-4 py-6 sm:px-6'">
     <RouterView />
   </main>
 </template>

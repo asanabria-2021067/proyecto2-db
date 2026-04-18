@@ -1,94 +1,136 @@
 <script setup lang="ts">
+import { onMounted, ref, computed } from 'vue'
 import { useAuthStore } from '../stores/auth.store'
 import { useRouter } from 'vue-router'
+import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Separator } from '@/components/ui/separator'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { useConfirm } from '@/composables/useSwal'
+import gsap from 'gsap'
 
 const auth = useAuthStore()
 const router = useRouter()
+const navRef = ref<HTMLElement>()
 
-function logout() {
+async function logout() {
+  const result = await useConfirm({
+    title: 'Cerrar sesion?',
+    text: 'Se cerrara tu sesion actual.',
+    icon: 'question',
+    confirmText: 'Si, salir',
+  })
+  if (!result.isConfirmed) return
   auth.logout()
-  router.push('/login')
+  router.push('/')
 }
+
+const adminLinks = [
+  { to: '/dashboard', label: 'Dashboard', icon: '📊' },
+  { to: '/productos', label: 'Productos', icon: '📦' },
+  { to: '/clientes', label: 'Clientes', icon: '👥' },
+  { to: '/ventas', label: 'Ventas', icon: '💰' },
+  { to: '/catalogo', label: 'Catalogo', icon: '📚' },
+]
+
+const clienteLinks = [
+  { to: '/catalogo', label: 'Catalogo', icon: '📚' },
+]
+
+const visibleLinks = computed(() => {
+  if (auth.rol === 'cliente') return clienteLinks
+  if (auth.rol === 'admin' || auth.rol === 'vendedor') return adminLinks
+  return []
+})
+
+const brandTarget = computed(() => {
+  if (auth.rol === 'admin' || auth.rol === 'vendedor') return '/dashboard'
+  return '/catalogo'
+})
+
+onMounted(() => {
+  gsap.from(navRef.value!, {
+    y: -20,
+    opacity: 0,
+    duration: 0.3,
+    ease: 'power2.out',
+  })
+})
 </script>
 
 <template>
-  <nav class="navbar">
-    <div class="navbar-inner">
-      <RouterLink to="/dashboard" class="navbar-brand">Tienda de Libros</RouterLink>
-      <div class="navbar-links">
-        <template v-if="auth.rol === 'admin' || auth.rol === 'vendedor'">
-          <RouterLink to="/dashboard">Dashboard</RouterLink>
-          <RouterLink to="/productos">Productos</RouterLink>
-          <RouterLink to="/clientes">Clientes</RouterLink>
-          <RouterLink to="/ventas">Ventas</RouterLink>
-        </template>
-        <RouterLink to="/catalogo">Catalogo</RouterLink>
+  <nav ref="navRef" class="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div class="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4 sm:px-6">
+      <!-- Brand -->
+      <RouterLink :to="brandTarget" class="group flex items-center gap-2 text-lg font-bold text-foreground transition-colors duration-200 hover:text-primary">
+        <span class="text-xl transition-transform duration-200 group-hover:scale-110">📚</span>
+        <span>Tienda de Libros</span>
+      </RouterLink>
+
+      <Separator orientation="vertical" class="h-6" />
+
+      <!-- Back to landing -->
+      <RouterLink
+        to="/"
+        class="px-2 py-1 text-xs font-medium text-muted-foreground rounded-md border border-transparent transition-all duration-200 hover:text-foreground hover:border-border hover:bg-muted"
+      >
+        Inicio
+      </RouterLink>
+
+      <!-- Nav links -->
+      <div class="flex items-center gap-0.5 flex-1">
+        <RouterLink
+          v-for="link in visibleLinks"
+          :key="link.to"
+          :to="link.to"
+          class="group relative px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md transition-all duration-200 hover:text-foreground hover:bg-accent/80 hover:shadow-sm"
+          active-class="!text-primary !bg-primary/10 !shadow-sm"
+        >
+          <span class="mr-1.5 transition-transform duration-200 group-hover:scale-110 inline-block">{{ link.icon }}</span>
+          {{ link.label }}
+        </RouterLink>
       </div>
-      <div class="navbar-user">
-        <span>{{ auth.user?.username }} ({{ auth.rol }})</span>
-        <button class="btn btn-sm" @click="logout">Salir</button>
-      </div>
+
+      <!-- User dropdown -->
+      <DropdownMenu>
+        <DropdownMenuTrigger as-child>
+          <Button variant="ghost" class="relative h-9 w-9 rounded-full transition-all duration-200 hover:ring-2 hover:ring-primary/20 hover:scale-105">
+            <Avatar class="h-9 w-9">
+              <AvatarFallback class="bg-primary text-primary-foreground text-sm font-bold">
+                {{ auth.user?.username?.charAt(0).toUpperCase() }}
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" class="w-52">
+          <DropdownMenuLabel>
+            <div class="flex flex-col gap-0.5">
+              <span class="text-sm font-semibold">{{ auth.user?.username }}</span>
+              <span class="text-xs text-muted-foreground capitalize">Rol: {{ auth.rol }}</span>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem as-child>
+            <RouterLink to="/" class="cursor-pointer">
+              Pagina principal
+            </RouterLink>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            @click="logout"
+            class="text-destructive cursor-pointer transition-colors duration-150 focus:text-destructive focus:bg-destructive/10"
+          >
+            Cerrar sesion
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   </nav>
 </template>
-
-<style scoped>
-.navbar {
-  background: var(--color-primary);
-  color: #fff;
-  padding: 0 1.5rem;
-  margin-bottom: 1.5rem;
-}
-.navbar-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  height: 56px;
-}
-.navbar-brand {
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: #fff !important;
-  text-decoration: none;
-}
-.navbar-links {
-  display: flex;
-  gap: 1rem;
-  flex: 1;
-}
-.navbar-links a {
-  color: rgba(255,255,255,0.85);
-  text-decoration: none;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
-}
-.navbar-links a:hover,
-.navbar-links a.router-link-active {
-  color: #fff;
-  background: rgba(255,255,255,0.15);
-}
-.navbar-user {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.85rem;
-}
-.navbar-user span {
-  opacity: 0.9;
-}
-.btn-sm {
-  padding: 0.25rem 0.75rem;
-  font-size: 0.8rem;
-  background: rgba(255,255,255,0.2);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 4px;
-  cursor: pointer;
-}
-.btn-sm:hover {
-  background: rgba(255,255,255,0.3);
-}
-</style>
