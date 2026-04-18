@@ -1,21 +1,17 @@
 <script setup lang="ts">
 import Navbar from './components/Navbar.vue'
+import { Toaster } from '@/components/ui/sonner'
 import { useAuthStore } from './stores/auth.store'
+import { useRoute } from 'vue-router'
 
 const auth = useAuthStore()
+const route = useRoute()
 </script>
 
 <template>
-  <Navbar v-if="auth.isLoggedIn" />
-  <main class="container">
+  <Toaster position="top-right" :duration="3000" />
+  <Navbar v-if="auth.isLoggedIn && route.path !== '/'" />
+  <main :class="route.path === '/' ? '' : 'mx-auto max-w-7xl px-4 py-6 sm:px-6'">
     <RouterView />
   </main>
 </template>
-
-<style scoped>
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1.5rem;
-}
-</style>
