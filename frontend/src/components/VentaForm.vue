@@ -1,12 +1,25 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import api from '../services/api'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
+} from '@/components/ui/dialog'
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select'
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from '@/components/ui/table'
 
 const emit = defineEmits<{
   save: [data: any]
   cancel: []
 }>()
 
+const open = ref(true)
 const clientes = ref<any[]>([])
 const productos = ref<any[]>([])
 const clienteId = ref('')
@@ -30,9 +43,10 @@ function removeItem(i: number) {
   items.value.splice(i, 1)
 }
 
-function onProductoChange(i: number) {
+function onProductoChange(i: number, val: string) {
   const item = items.value[i]!
-  const prod = productos.value.find((p: any) => String(p.id_producto) === String(item.producto_id))
+  item.producto_id = val
+  const prod = productos.value.find((p: any) => String(p.id_producto) === val)
   if (prod) {
     item.precio_unitario = Number(prod.precio)
   }
@@ -68,103 +82,107 @@ function submit() {
     })),
   })
 }
+
+function handleOpenChange(val: boolean) {
+  if (!val) emit('cancel')
+  open.value = val
+}
 </script>
 
 <template>
-  <div class="modal-overlay" @click.self="emit('cancel')">
-    <div class="modal modal-lg">
-      <h2>Nueva Venta</h2>
-      <div v-if="error" class="error-msg">{{ error }}</div>
-      <form @submit.prevent="submit">
-        <div class="form-group">
-          <label>Cliente *</label>
-          <select v-model="clienteId" required>
-            <option value="">Seleccionar...</option>
-            <option v-for="c in clientes" :key="c.id_cliente" :value="c.id_cliente">
-              {{ c.nombre }}
-            </option>
-          </select>
+  <Dialog :open="open" @update:open="handleOpenChange">
+    <DialogContent class="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogHeader>
+        <DialogTitle>Nueva Venta</DialogTitle>
+      </DialogHeader>
+
+      <div v-if="error" class="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        {{ error }}
+      </div>
+
+      <form @submit.prevent="submit" class="space-y-4">
+        <div class="space-y-2">
+          <Label>Cliente *</Label>
+          <Select v-model="clienteId">
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccionar cliente..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="c in clientes" :key="c.id_cliente" :value="String(c.id_cliente)">
+                {{ c.nombre }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        <div class="items-header">
-          <h3>Productos</h3>
-          <button type="button" class="btn btn-xs" @click="addItem">+ Agregar</button>
+        <div class="flex items-center justify-between">
+          <Label class="text-base font-semibold">Productos</Label>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            class="transition-all duration-200 hover:border-primary/50 hover:text-primary hover:bg-primary/5"
+            @click="addItem"
+          >
+            + Agregar
+          </Button>
         </div>
 
-        <table v-if="items.length" class="items-table">
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Cantidad</th>
-              <th>Precio Unit.</th>
-              <th>Subtotal</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, i) in items" :key="i">
-              <td>
-                <select v-model="item.producto_id" @change="onProductoChange(i)" required>
-                  <option value="">Seleccionar...</option>
-                  <option v-for="p in productos" :key="p.id_producto" :value="p.id_producto">
-                    {{ p.titulo }} (stock: {{ p.stock }})
-                  </option>
-                </select>
-              </td>
-              <td><input v-model.number="item.cantidad" type="number" min="1" style="width:70px" /></td>
-              <td class="text-right">Q{{ item.precio_unitario.toFixed(2) }}</td>
-              <td class="text-right">Q{{ (item.cantidad * item.precio_unitario).toFixed(2) }}</td>
-              <td><button type="button" class="btn btn-xs btn-danger" @click="removeItem(i)">X</button></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="total-row">
-          <strong>Total: Q{{ total.toFixed(2) }}</strong>
+        <div v-if="items.length" class="rounded-lg border">
+          <Table>
+            <TableHeader>
+              <TableRow class="hover:bg-transparent">
+                <TableHead>Producto</TableHead>
+                <TableHead class="w-24">Cantidad</TableHead>
+                <TableHead class="text-right">Precio Unit.</TableHead>
+                <TableHead class="text-right">Subtotal</TableHead>
+                <TableHead class="w-12"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow v-for="(item, i) in items" :key="i" class="transition-colors duration-150 hover:bg-muted/50">
+                <TableCell>
+                  <Select :model-value="item.producto_id" @update:model-value="(v: string) => onProductoChange(i, v)">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem v-for="p in productos" :key="p.id_producto" :value="String(p.id_producto)">
+                        {{ p.titulo }} (stock: {{ p.stock }})
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </TableCell>
+                <TableCell>
+                  <Input v-model.number="item.cantidad" type="number" min="1" class="w-20" />
+                </TableCell>
+                <TableCell class="text-right font-mono">Q{{ item.precio_unitario.toFixed(2) }}</TableCell>
+                <TableCell class="text-right font-mono font-medium">Q{{ (item.cantidad * item.precio_unitario).toFixed(2) }}</TableCell>
+                <TableCell>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    class="h-7 w-7 p-0 text-destructive border-destructive/30 transition-all duration-200 hover:bg-destructive hover:text-white hover:border-destructive"
+                    @click="removeItem(i)"
+                  >
+                    X
+                  </Button>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         </div>
 
-        <div class="form-actions">
-          <button type="button" class="btn" @click="emit('cancel')">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Registrar Venta</button>
+        <div class="text-right text-lg font-bold border-t pt-3">
+          Total: <span class="text-primary">Q{{ total.toFixed(2) }}</span>
         </div>
+
+        <DialogFooter>
+          <Button type="button" variant="outline" class="transition-all duration-200 hover:bg-muted" @click="emit('cancel')">Cancelar</Button>
+          <Button type="submit" class="transition-all duration-200 hover:scale-105 hover:shadow-md">Registrar Venta</Button>
+        </DialogFooter>
       </form>
-    </div>
-  </div>
+    </DialogContent>
+  </Dialog>
 </template>
-
-<style scoped>
-.items-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 1rem 0 0.5rem;
-}
-.items-header h3 {
-  margin: 0;
-  font-size: 1rem;
-}
-.items-table {
-  width: 100%;
-  margin-bottom: 0.5rem;
-}
-.items-table select,
-.items-table input {
-  padding: 0.3rem 0.5rem;
-  font-size: 0.85rem;
-}
-.total-row {
-  text-align: right;
-  padding: 0.75rem 0;
-  font-size: 1.1rem;
-  border-top: 2px solid var(--color-border);
-}
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-.modal-lg {
-  max-width: 700px;
-}
-</style>
