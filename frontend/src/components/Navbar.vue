@@ -42,6 +42,7 @@ const adminLinks = [
 
 const clienteLinks = [
   { to: '/catalogo', label: 'Catalogo', icon: '📚' },
+  { to: '/mis-compras', label: 'Mis Compras', icon: '🛒' },
 ]
 
 const visibleLinks = computed(() => {
@@ -76,14 +77,6 @@ onMounted(() => {
 
       <Separator orientation="vertical" class="h-6" />
 
-      <!-- Back to landing -->
-      <RouterLink
-        to="/"
-        class="px-2 py-1 text-xs font-medium text-muted-foreground rounded-md border border-transparent transition-all duration-200 hover:text-foreground hover:border-border hover:bg-muted"
-      >
-        Inicio
-      </RouterLink>
-
       <!-- Nav links -->
       <div class="flex items-center gap-0.5 flex-1">
         <RouterLink
@@ -116,12 +109,6 @@ onMounted(() => {
               <span class="text-xs text-muted-foreground capitalize">Rol: {{ auth.rol }}</span>
             </div>
           </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem as-child>
-            <RouterLink to="/" class="cursor-pointer">
-              Pagina principal
-            </RouterLink>
-          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             @click="logout"

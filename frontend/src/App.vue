@@ -8,13 +8,14 @@ const auth = useAuthStore()
 const route = useRoute()
 
 const isLanding = () => route.path === '/'
-const showNavbar = () => !isLanding()
+const isLogin = () => route.path === '/login'
+const showNavbar = () => auth.isLoggedIn && !isLanding() && !isLogin()
 </script>
 
 <template>
   <Toaster position="top-right" :duration="3000" />
   <Navbar v-if="showNavbar()" />
-  <main :class="isLanding() ? '' : 'mx-auto max-w-7xl px-4 py-6 sm:px-6'">
+  <main :class="isLanding() || isLogin() ? '' : 'mx-auto max-w-7xl px-4 py-6 sm:px-6'">
     <RouterView />
   </main>
 </template>
