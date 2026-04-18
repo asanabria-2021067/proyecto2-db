@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.store'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import gsap from 'gsap'
 
 const auth = useAuthStore()
 const router = useRouter()
@@ -10,6 +15,7 @@ const username = ref('')
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
+const cardRef = ref<HTMLElement>()
 
 async function handleLogin() {
   error.value = ''
@@ -31,61 +37,42 @@ async function handleLogin() {
     loading.value = false
   }
 }
+
+onMounted(() => {
+  gsap.from(cardRef.value!, {
+    y: 30,
+    opacity: 0,
+    duration: 0.3,
+    ease: 'power2.out',
+  })
+})
 </script>
 
 <template>
-  <div class="login-wrapper">
-    <div class="login-card">
-      <h1>Tienda de Libros y Mangas</h1>
-      <p class="subtitle">Inicia sesion para continuar</p>
-      <form @submit.prevent="handleLogin">
-        <div class="form-group">
-          <label for="username">Usuario</label>
-          <input id="username" v-model="username" type="text" placeholder="username" autofocus />
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input id="password" v-model="password" type="password" placeholder="password" />
-        </div>
-        <div v-if="error" class="error-msg">{{ error }}</div>
-        <button type="submit" class="btn btn-primary" :disabled="loading">
-          {{ loading ? 'Ingresando...' : 'Ingresar' }}
-        </button>
-      </form>
-      <div class="login-hint">
-        <small>Demo: admin/admin123 | vendedor1/vend123 | cliente1/cli123</small>
-      </div>
-    </div>
+  <div class="flex min-h-[80vh] items-center justify-center">
+    <Card ref="cardRef" class="w-full max-w-sm">
+      <CardHeader class="text-center">
+        <CardTitle class="text-2xl">Tienda de Libros y Mangas</CardTitle>
+        <CardDescription>Inicia sesion para continuar</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form @submit.prevent="handleLogin" class="space-y-4">
+          <div class="space-y-2">
+            <Label for="username">Usuario</Label>
+            <Input id="username" v-model="username" type="text" placeholder="Tu usuario" autofocus />
+          </div>
+          <div class="space-y-2">
+            <Label for="password">Password</Label>
+            <Input id="password" v-model="password" type="password" placeholder="Tu password" />
+          </div>
+          <div v-if="error" class="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+            {{ error }}
+          </div>
+          <Button type="submit" class="w-full" :disabled="loading">
+            {{ loading ? 'Ingresando...' : 'Ingresar' }}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   </div>
 </template>
-
-<style scoped>
-.login-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-}
-.login-card {
-  background: var(--color-background-soft);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 2.5rem;
-  width: 100%;
-  max-width: 400px;
-}
-.login-card h1 {
-  font-size: 1.4rem;
-  margin-bottom: 0.25rem;
-}
-.subtitle {
-  color: var(--color-text-muted);
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-}
-.login-hint {
-  margin-top: 1.25rem;
-  text-align: center;
-  color: var(--color-text-muted);
-}
-</style>

@@ -13,6 +13,14 @@ import {
   Legend,
 } from 'chart.js'
 import reporteService from '../services/reporte.service'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from '@/components/ui/table'
+import { useSuccess, useError } from '@/composables/useSwal'
+import gsap from 'gsap'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend)
 
@@ -47,7 +55,8 @@ async function load() {
       datasets: [{
         label: 'Unidades vendidas',
         data: topRes.data.map((p: any) => Number(p.total_vendido)),
-        backgroundColor: '#4f46e5',
+        backgroundColor: 'oklch(0.45 0.18 265)',
+        borderRadius: 6,
       }],
     }
 
@@ -56,8 +65,8 @@ async function load() {
       datasets: [{
         label: 'Total ventas (Q)',
         data: mesRes.data.map((m: any) => Number(m.total)),
-        borderColor: '#4f46e5',
-        backgroundColor: 'rgba(79,70,229,0.1)',
+        borderColor: 'oklch(0.45 0.18 265)',
+        backgroundColor: 'oklch(0.45 0.18 265 / 0.1)',
         fill: true,
         tension: 0.3,
       }],
@@ -78,12 +87,22 @@ async function exportCsv() {
     a.download = 'ventas.csv'
     a.click()
     window.URL.revokeObjectURL(url)
+    await useSuccess('Exportado', 'El archivo CSV se descargo correctamente')
   } catch {
-    alert('Error al exportar CSV')
+    useError('Error', 'No se pudo exportar el CSV')
   }
 }
 
-onMounted(load)
+onMounted(async () => {
+  await load()
+  gsap.from('.dashboard-card', {
+    y: 20,
+    opacity: 0,
+    duration: 0.25,
+    stagger: 0.05,
+    ease: 'power2.out',
+  })
+})
 
 const chartOptions = {
   responsive: true,
@@ -94,114 +113,122 @@ const chartOptions = {
 
 <template>
   <div>
-    <div class="page-header">
-      <h1>Dashboard</h1>
-      <button class="btn btn-primary" @click="exportCsv">Exportar Ventas CSV</button>
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl font-bold">Dashboard</h1>
+      <Button variant="outline" class="gap-1.5 transition-all duration-200 hover:border-primary/50 hover:text-primary hover:bg-primary/5 hover:shadow-sm" @click="exportCsv">
+        Exportar Ventas CSV
+      </Button>
     </div>
 
-    <div v-if="loading" class="loading">Cargando reportes...</div>
+    <div v-if="loading" class="text-center py-16 text-muted-foreground">Cargando reportes...</div>
 
     <template v-else>
-      <div class="charts-grid">
-        <div class="card">
-          <h3>Top 10 Productos Mas Vendidos</h3>
-          <div class="chart-container">
-            <Bar :data="topChartData" :options="chartOptions" />
-          </div>
-        </div>
-        <div class="card">
-          <h3>Ventas por Mes</h3>
-          <div class="chart-container">
-            <Line :data="ventasMesChartData" :options="chartOptions" />
-          </div>
-        </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <Card class="dashboard-card shadow-sm transition-all duration-250 hover:shadow-md hover:-translate-y-0.5">
+          <CardHeader>
+            <CardTitle class="text-sm font-medium text-muted-foreground uppercase tracking-wide">Top 10 Productos Mas Vendidos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="h-64">
+              <Bar :data="topChartData" :options="chartOptions" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card class="dashboard-card shadow-sm transition-all duration-250 hover:shadow-md hover:-translate-y-0.5">
+          <CardHeader>
+            <CardTitle class="text-sm font-medium text-muted-foreground uppercase tracking-wide">Ventas por Mes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="h-64">
+              <Line :data="ventasMesChartData" :options="chartOptions" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <div class="tables-grid">
-        <div class="card">
-          <h3>Stock Bajo (5 o menos)</h3>
-          <table>
-            <thead>
-              <tr><th>Producto</th><th>Stock</th><th>Precio</th></tr>
-            </thead>
-            <tbody>
-              <tr v-for="p in stockBajo" :key="p.id_producto">
-                <td>{{ p.titulo }}</td>
-                <td class="stock-low">{{ p.stock }}</td>
-                <td>Q{{ Number(p.precio).toFixed(2) }}</td>
-              </tr>
-              <tr v-if="!stockBajo.length"><td colspan="3">Sin productos con stock bajo</td></tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card class="dashboard-card shadow-sm transition-all duration-250 hover:shadow-md hover:-translate-y-0.5">
+          <CardHeader>
+            <CardTitle class="text-sm font-medium text-muted-foreground uppercase tracking-wide">Stock Bajo (5 o menos)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow class="hover:bg-transparent">
+                  <TableHead>Producto</TableHead>
+                  <TableHead class="text-right">Stock</TableHead>
+                  <TableHead class="text-right">Precio</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow v-for="p in stockBajo" :key="p.id_producto" class="transition-colors duration-150 hover:bg-muted/50">
+                  <TableCell class="font-medium">{{ p.titulo }}</TableCell>
+                  <TableCell class="text-right">
+                    <Badge variant="destructive">{{ p.stock }}</Badge>
+                  </TableCell>
+                  <TableCell class="text-right font-mono">Q{{ Number(p.precio).toFixed(2) }}</TableCell>
+                </TableRow>
+                <TableRow v-if="!stockBajo.length">
+                  <TableCell colspan="3" class="text-center text-muted-foreground py-6">Sin productos con stock bajo</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
 
-        <div class="card">
-          <h3>Productos No Vendidos</h3>
-          <table>
-            <thead>
-              <tr><th>Producto</th><th>Stock</th><th>Precio</th></tr>
-            </thead>
-            <tbody>
-              <tr v-for="p in productosNoVendidos" :key="p.id_producto">
-                <td>{{ p.titulo }}</td>
-                <td>{{ p.stock }}</td>
-                <td>Q{{ Number(p.precio).toFixed(2) }}</td>
-              </tr>
-              <tr v-if="!productosNoVendidos.length"><td colspan="3">Todos los productos se han vendido</td></tr>
-            </tbody>
-          </table>
-        </div>
+        <Card class="dashboard-card shadow-sm transition-all duration-250 hover:shadow-md hover:-translate-y-0.5">
+          <CardHeader>
+            <CardTitle class="text-sm font-medium text-muted-foreground uppercase tracking-wide">Productos No Vendidos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow class="hover:bg-transparent">
+                  <TableHead>Producto</TableHead>
+                  <TableHead class="text-right">Stock</TableHead>
+                  <TableHead class="text-right">Precio</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow v-for="p in productosNoVendidos" :key="p.id_producto" class="transition-colors duration-150 hover:bg-muted/50">
+                  <TableCell class="font-medium">{{ p.titulo }}</TableCell>
+                  <TableCell class="text-right">{{ p.stock }}</TableCell>
+                  <TableCell class="text-right font-mono">Q{{ Number(p.precio).toFixed(2) }}</TableCell>
+                </TableRow>
+                <TableRow v-if="!productosNoVendidos.length">
+                  <TableCell colspan="3" class="text-center text-muted-foreground py-6">Todos los productos se han vendido</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
 
-        <div class="card">
-          <h3>Ranking Clientes (CTE)</h3>
-          <table>
-            <thead>
-              <tr><th>#</th><th>Cliente</th><th>Compras</th><th>Total</th></tr>
-            </thead>
-            <tbody>
-              <tr v-for="c in rankingClientes" :key="c.id_cliente">
-                <td>{{ c.ranking }}</td>
-                <td>{{ c.nombre }}</td>
-                <td>{{ c.cantidad_compras }}</td>
-                <td>Q{{ Number(c.total_gastado).toFixed(2) }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <Card class="dashboard-card shadow-sm transition-all duration-250 hover:shadow-md hover:-translate-y-0.5">
+          <CardHeader>
+            <CardTitle class="text-sm font-medium text-muted-foreground uppercase tracking-wide">Ranking Clientes (CTE)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow class="hover:bg-transparent">
+                  <TableHead class="w-10">#</TableHead>
+                  <TableHead>Cliente</TableHead>
+                  <TableHead class="text-right">Compras</TableHead>
+                  <TableHead class="text-right">Total</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow v-for="c in rankingClientes" :key="c.id_cliente" class="transition-colors duration-150 hover:bg-muted/50">
+                  <TableCell class="font-mono text-muted-foreground">{{ c.ranking }}</TableCell>
+                  <TableCell class="font-medium">{{ c.nombre }}</TableCell>
+                  <TableCell class="text-right">{{ c.cantidad_compras }}</TableCell>
+                  <TableCell class="text-right font-mono">Q{{ Number(c.total_gastado).toFixed(2) }}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       </div>
     </template>
   </div>
 </template>
-
-<style scoped>
-.charts-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-.chart-container {
-  height: 250px;
-  position: relative;
-}
-.tables-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 1.5rem;
-}
-.stock-low {
-  color: var(--color-danger);
-  font-weight: 700;
-}
-.loading {
-  text-align: center;
-  padding: 3rem;
-  color: var(--color-text-muted);
-}
-@media (max-width: 900px) {
-  .charts-grid,
-  .tables-grid {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
