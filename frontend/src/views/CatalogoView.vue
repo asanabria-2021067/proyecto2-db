@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import api from '../services/api'
+import { useAuthStore } from '../stores/auth.store'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -8,12 +9,15 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
+import { useConfirm, useSuccess, useError } from '@/composables/useSwal'
 import gsap from 'gsap'
 
+const auth = useAuthStore()
 const productos = ref<any[]>([])
 const search = ref('')
 const tipoFilter = ref('all')
 const loading = ref(true)
+const buying = ref<number | null>(null)
 
 async function load() {
   try {
@@ -43,6 +47,37 @@ const filtered = computed(() => {
 
 const tipos = computed(() => [...new Set(productos.value.map((p: any) => p.tipo))])
 
+async function comprar(producto: any) {
+  if (!auth.isLoggedIn) {
+    useError('Inicia sesion', 'Debes iniciar sesion para comprar')
+    return
+  }
+  const result = await useConfirm({
+    title: 'Confirmar compra',
+    text: `Comprar "${producto.titulo}" por Q${Number(producto.precio).toFixed(2)}?`,
+    icon: 'question',
+    confirmText: 'Comprar',
+  })
+  if (!result.isConfirmed) return
+
+  buying.value = producto.id_producto
+  try {
+    await api.post('/ventas', {
+      items: [{
+        producto_id: producto.id_producto,
+        cantidad: 1,
+        precio_unitario: Number(producto.precio),
+      }],
+    })
+    await useSuccess('Compra exitosa', `"${producto.titulo}" se agrego a tus compras`)
+    await load()
+  } catch (err: any) {
+    useError('Error', err.response?.data?.error ?? 'No se pudo completar la compra')
+  } finally {
+    buying.value = null
+  }
+}
+
 onMounted(async () => {
   await load()
   gsap.from('.catalog-item', {
@@ -57,14 +92,8 @@ onMounted(async () => {
 
 <template>
   <div>
-    <!-- Header with back button -->
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
-        <RouterLink to="/">
-          <Button variant="outline" size="sm" class="gap-1.5 transition-all duration-200 hover:border-primary/50 hover:text-primary hover:bg-primary/5">
-            ← Inicio
-          </Button>
-        </RouterLink>
         <h1 class="text-2xl font-bold">Catalogo</h1>
         <Badge variant="secondary" class="text-xs">{{ filtered.length }} productos</Badge>
       </div>
@@ -91,14 +120,14 @@ onMounted(async () => {
         :key="p.id_producto"
         class="catalog-item group overflow-hidden flex flex-col border transition-all duration-250 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1.5 hover:border-primary/30"
       >
-        <div v-if="p.imagen_url" class="aspect-[2vh] overflow-hidden bg-muted">
+        <div v-if="p.imagen_url" class="aspect-[3/4] overflow-hidden bg-muted">
           <img
             :src="p.imagen_url"
             :alt="p.titulo"
             class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </div>
-        <div v-else class="aspect-[2vh] bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center text-5xl text-muted-foreground/50 transition-all duration-300 group-hover:from-primary/5 group-hover:to-accent/5">
+        <div v-else class="aspect-[3/4] bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center text-5xl text-muted-foreground/50 transition-all duration-300 group-hover:from-primary/5 group-hover:to-accent/5">
           📖
         </div>
         <CardContent class="pt-4 flex-1">
@@ -109,13 +138,25 @@ onMounted(async () => {
           <p v-if="p.descripcion" class="text-xs text-muted-foreground mt-2 line-clamp-2">{{ p.descripcion }}</p>
         </CardContent>
         <CardFooter class="flex justify-between items-center border-t pt-3 transition-colors duration-200 group-hover:bg-muted/30">
-          <span class="text-lg font-bold text-primary">Q{{ Number(p.precio).toFixed(2) }}</span>
-          <Badge
-            :variant="p.stock <= 5 ? 'destructive' : 'outline'"
-            class="text-xs"
+          <div>
+            <span class="text-lg font-bold text-primary">Q{{ Number(p.precio).toFixed(2) }}</span>
+            <Badge
+              :variant="p.stock <= 5 ? 'destructive' : 'outline'"
+              class="text-xs ml-2"
+            >
+              {{ p.stock > 0 ? `${p.stock} disp.` : 'Agotado' }}
+            </Badge>
+          </div>
+          <Button
+            v-if="auth.isLoggedIn && auth.rol === 'cliente' && p.stock > 0"
+            size="sm"
+            class="transition-all duration-200 hover:scale-105 hover:shadow-md"
+            :disabled="buying === p.id_producto"
+            @click="comprar(p)"
           >
-            {{ p.stock > 0 ? `${p.stock} disponibles` : 'Agotado' }}
-          </Badge>
+            {{ buying === p.id_producto ? 'Comprando...' : 'Comprar' }}
+          </Button>
+          <Badge v-else-if="p.stock === 0" variant="destructive" class="text-xs">Agotado</Badge>
         </CardFooter>
       </Card>
     </div>
