@@ -15,6 +15,39 @@ router.get('/', authMiddleware, roleGuard('admin', 'vendedor'), async (_req: Req
 	}
 });
 
+// GET detalle de una venta (admin/vendedor)
+router.get('/detalle/:id', authMiddleware, roleGuard('admin', 'vendedor'), async (req: Request, res: Response) => {
+	try {
+		const detalle = await pool.query(Q.GET_DETALLE, [req.params['id']]);
+		res.json(detalle.rows);
+	} catch {
+		res.status(500).json({ error: 'Error al obtener detalle' });
+	}
+});
+
+// GET mis compras (cliente)
+router.get('/mis-compras', authMiddleware, roleGuard('cliente'), async (req: Request, res: Response) => {
+	try {
+		const clienteResult = await pool.query(Q.GET_CLIENTE_BY_USUARIO, [req.user!.id_usuario]);
+		if (clienteResult.rows.length === 0) {
+			res.json([]);
+			return;
+		}
+		const clienteId = clienteResult.rows[0].id_cliente;
+		const result = await pool.query(Q.GET_MIS_COMPRAS, [clienteId]);
+
+		// Traer detalle de cada compra
+		const compras = [];
+		for (const venta of result.rows) {
+			const detalle = await pool.query(Q.GET_MIS_COMPRAS_DETALLE, [venta.id_venta]);
+			compras.push({ ...venta, detalle: detalle.rows });
+		}
+		res.json(compras);
+	} catch {
+		res.status(500).json({ error: 'Error al obtener compras' });
+	}
+});
+
 router.get('/:id', authMiddleware, roleGuard('admin', 'vendedor'), async (req: Request, res: Response) => {
 	try {
 		const venta = await pool.query(Q.GET_BY_ID, [req.params['id']]);
@@ -33,7 +66,23 @@ router.get('/:id', authMiddleware, roleGuard('admin', 'vendedor'), async (req: R
 router.post('/', authMiddleware, roleGuard('admin', 'vendedor', 'cliente'), async (req: Request, res: Response) => {
 	const client = await pool.connect();
 	try {
-		const { cliente_id, empleado_id, items } = req.body;
+		let { cliente_id, empleado_id, items } = req.body;
+
+		// Auto-resolver cliente_id para rol cliente
+		if (req.user!.rol === 'cliente') {
+			const clienteResult = await client.query(Q.GET_CLIENTE_BY_USUARIO, [req.user!.id_usuario]);
+			if (clienteResult.rows.length === 0) {
+				res.status(400).json({ error: 'No se encontro perfil de cliente' });
+				return;
+			}
+			cliente_id = clienteResult.rows[0].id_cliente;
+			empleado_id = null;
+		}
+
+		if (!cliente_id) {
+			res.status(400).json({ error: 'Cliente es requerido' });
+			return;
+		}
 
 		if (!items || !Array.isArray(items) || items.length === 0) {
 			res.status(400).json({ error: 'Debe incluir al menos un producto' });
@@ -80,6 +129,8 @@ router.post('/', authMiddleware, roleGuard('admin', 'vendedor', 'cliente'), asyn
 	} catch (err: any) {
 		await client.query('ROLLBACK');
 		if (err.message?.startsWith('Stock insuficiente')) {
+			res.status(400).json({ error: err.message });
+		} else if (err.message?.startsWith('No se encontro')) {
 			res.status(400).json({ error: err.message });
 		} else {
 			res.status(500).json({ error: 'Error al registrar venta' });

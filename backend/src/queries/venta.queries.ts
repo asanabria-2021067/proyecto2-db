@@ -38,3 +38,23 @@ VALUES ($1, $2, $3, $4)`;
 
 export const UPDATE_STOCK = `
 UPDATE producto SET stock = stock - $1 WHERE id_producto = $2 RETURNING stock`;
+
+export const GET_CLIENTE_BY_USUARIO = `
+SELECT id_cliente FROM cliente WHERE usuario_id = $1`;
+
+export const GET_MIS_COMPRAS = `
+SELECT
+	v.id_venta, v.fecha, v.total, v.estado,
+	COALESCE(e.nombre, 'Venta web') AS empleado
+FROM venta v
+LEFT JOIN empleado e ON v.empleado_id = e.id_empleado
+WHERE v.cliente_id = $1
+ORDER BY v.fecha DESC`;
+
+export const GET_MIS_COMPRAS_DETALLE = `
+SELECT
+	dv.cantidad, dv.precio_unitario,
+	p.titulo AS producto
+FROM detalle_venta dv
+JOIN producto p ON dv.producto_id = p.id_producto
+WHERE dv.venta_id = $1`;
