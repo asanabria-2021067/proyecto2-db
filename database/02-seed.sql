@@ -37,22 +37,22 @@ INSERT INTO autor (nombre, nacionalidad, fecha_nacimiento) VALUES
 	('Naoko Takeuchi', 'Japonesa', '1967-03-15');
 
 -- Productos
-INSERT INTO producto (titulo, descripcion, precio, stock, isbn, anio_publicacion, categoria_id, editorial_id) VALUES
-	('Dragon Ball Vol. 1', 'La aventura de Goku comienza en busca de las esferas del dragon', 12.99, 25, '978-84-679-0001-1', 1984, 1, 1),
-	('One Piece Vol. 1', 'Monkey D. Luffy zarpa en busca del One Piece', 11.99, 30, '978-84-679-0002-8', 1997, 1, 5),
-	('Shingeki no Kyojin Vol. 1', 'La humanidad lucha por su supervivencia contra los titanes', 13.50, 20, '978-84-679-0003-5', 2009, 1, 1),
-	('Berserk Vol. 1', 'Guts, el espadachin negro, busca venganza', 14.99, 15, '978-84-679-0004-2', 1989, 2, 2),
-	('Harry Potter y la Piedra Filosofal', 'Un joven mago descubre su destino en Hogwarts', 19.99, 40, '978-84-679-0005-9', 1997, 3, 4),
-	('1984', 'Una distopia sobre el control totalitario', 15.99, 35, '978-84-679-0006-6', 1949, 4, 3),
-	('Fundacion', 'El inicio de la saga mas grande de ciencia ficcion', 16.99, 18, '978-84-679-0007-3', 1951, 4, 3),
-	('Batman: El Regreso del Caballero Oscuro', 'Batman regresa despues de 10 anos de retiro', 24.99, 12, '978-84-679-0008-0', 1986, 5, 2),
-	('Sailor Moon Vol. 1', 'Usagi Tsukino descubre que es una guerrera magica', 12.50, 22, '978-84-679-0009-7', 1991, 1, 1),
-	('Dragon Ball Vol. 2', 'Goku entrena con el maestro Roshi', 12.99, 20, '978-84-679-0010-3', 1984, 1, 1),
-	('One Piece Vol. 2', 'Luffy recluta a Roronoa Zoro', 11.99, 28, '978-84-679-0011-0', 1997, 1, 5),
-	('Harry Potter y la Camara Secreta', 'El segundo ano de Harry en Hogwarts', 19.99, 38, '978-84-679-0012-7', 1998, 3, 4),
-	('National Geographic Enero', 'Edicion especial de naturaleza', 8.99, 50, '978-84-679-0013-4', 2024, 6, 3),
-	('Shingeki no Kyojin Vol. 2', 'La batalla por Trost continua', 13.50, 3, '978-84-679-0014-1', 2010, 1, 1),
-	('Fundacion e Imperio', 'La continuacion de la saga Fundacion', 16.99, 2, '978-84-679-0015-8', 1952, 4, 3);
+INSERT INTO producto (titulo, descripcion, precio, stock, isbn, anio_publicacion, imagen_url, categoria_id, editorial_id) VALUES
+	('Dragon Ball Vol. 1', 'La aventura de Goku comienza en busca de las esferas del dragon', 12.99, 25, '978-84-679-0001-1', 1984, 'https://covers.openlibrary.org/b/isbn/9781569319208-L.jpg', 1, 1),
+	('One Piece Vol. 1', 'Monkey D. Luffy zarpa en busca del One Piece', 11.99, 30, '978-84-679-0002-8', 1997, 'https://covers.openlibrary.org/b/isbn/9781569319017-L.jpg', 1, 5),
+	('Shingeki no Kyojin Vol. 1', 'La humanidad lucha por su supervivencia contra los titanes', 13.50, 20, '978-84-679-0003-5', 2009, 'https://covers.openlibrary.org/b/isbn/9781612620244-L.jpg', 1, 1),
+	('Berserk Vol. 1', 'Guts, el espadachin negro, busca venganza', 14.99, 15, '978-84-679-0004-2', 1989, 'https://covers.openlibrary.org/b/isbn/9781593070205-L.jpg', 2, 2),
+	('Harry Potter y la Piedra Filosofal', 'Un joven mago descubre su destino en Hogwarts', 19.99, 40, '978-84-679-0005-9', 1997, 'https://covers.openlibrary.org/b/isbn/9780747532699-L.jpg', 3, 4),
+	('1984', 'Una distopia sobre el control totalitario', 15.99, 35, '978-84-679-0006-6', 1949, 'https://covers.openlibrary.org/b/isbn/9780451524935-L.jpg', 4, 3),
+	('Fundacion', 'El inicio de la saga mas grande de ciencia ficcion', 16.99, 18, '978-84-679-0007-3', 1951, 'https://covers.openlibrary.org/b/isbn/9780553293357-L.jpg', 4, 3),
+	('Batman: El Regreso del Caballero Oscuro', 'Batman regresa despues de 10 anos de retiro', 24.99, 12, '978-84-679-0008-0', 1986, 'https://covers.openlibrary.org/b/isbn/9781563893421-L.jpg', 5, 2),
+	('Sailor Moon Vol. 1', 'Usagi Tsukino descubre que es una guerrera magica', 12.50, 22, '978-84-679-0009-7', 1991, 'https://covers.openlibrary.org/b/isbn/9781935429746-L.jpg', 1, 1),
+	('Dragon Ball Vol. 2', 'Goku entrena con el maestro Roshi', 12.99, 20, '978-84-679-0010-3', 1984, 'https://covers.openlibrary.org/b/isbn/9781569319222-L.jpg', 1, 1),
+	('One Piece Vol. 2', 'Luffy recluta a Roronoa Zoro', 11.99, 28, '978-84-679-0011-0', 1997, 'https://covers.openlibrary.org/b/isbn/9781591160571-L.jpg', 1, 5),
+	('Harry Potter y la Camara Secreta', 'El segundo ano de Harry en Hogwarts', 19.99, 38, '978-84-679-0012-7', 1998, 'https://covers.openlibrary.org/b/isbn/9780747538486-L.jpg', 3, 4),
+	('National Geographic Enero', 'Edicion especial de naturaleza', 8.99, 50, '978-84-679-0013-4', 2024, 'https://covers.openlibrary.org/b/isbn/9780792236733-L.jpg', 6, 3),
+	('Shingeki no Kyojin Vol. 2', 'La batalla por Trost continua', 13.50, 3, '978-84-679-0014-1', 2010, 'https://covers.openlibrary.org/b/isbn/9781612620251-L.jpg', 1, 1),
+	('Fundacion e Imperio', 'La continuacion de la saga Fundacion', 16.99, 2, '978-84-679-0015-8', 1952, 'https://covers.openlibrary.org/b/isbn/9780553293371-L.jpg', 4, 3);
 
 -- Producto-Autor
 INSERT INTO producto_autor (producto_id, autor_id) VALUES
