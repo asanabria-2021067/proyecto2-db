@@ -34,20 +34,40 @@ router.post('/login', async (req: Request, res: Response) => {
 });
 
 router.post('/register', async (req: Request, res: Response) => {
+	const { username, password, nombre, email, telefono, direccion } = req.body;
+	if (!username || !password || !nombre) {
+		res.status(400).json({ error: 'Username, password y nombre son requeridos' });
+		return;
+	}
+	const client = await pool.connect();
 	try {
-		const { username, password, rol } = req.body;
+		await client.query('BEGIN');
 		const hash = await bcrypt.hash(password, 10);
-		const result = await pool.query(
+		const userResult = await client.query(
 			'INSERT INTO usuario (username, password_hash, rol) VALUES ($1, $2, $3) RETURNING id_usuario, username, rol',
-			[username, hash, rol ?? 'cliente']
+			[username, hash, 'cliente']
 		);
-		res.status(201).json(result.rows[0]);
+		const user = userResult.rows[0];
+		await client.query(
+			'INSERT INTO cliente (nombre, email, telefono, direccion, usuario_id) VALUES ($1, $2, $3, $4, $5)',
+			[nombre, email ?? null, telefono ?? null, direccion ?? null, user.id_usuario]
+		);
+		await client.query('COMMIT');
+		const token = jwt.sign(
+			{ id_usuario: user.id_usuario, username: user.username, rol: user.rol },
+			JWT_SECRET,
+			{ expiresIn: '8h' }
+		);
+		res.status(201).json({ token, user });
 	} catch (err: any) {
+		await client.query('ROLLBACK');
 		if (err.code === '23505') {
 			res.status(409).json({ error: 'El username ya existe' });
 			return;
 		}
 		res.status(500).json({ error: 'Error al registrar' });
+	} finally {
+		client.release();
 	}
 });
 
