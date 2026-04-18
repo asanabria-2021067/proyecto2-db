@@ -8,6 +8,11 @@ const router = createRouter({
     { path: '/login', component: () => import('../views/LoginView.vue') },
     { path: '/catalogo', component: () => import('../views/CatalogoView.vue') },
     {
+      path: '/mis-compras',
+      component: () => import('../views/MisComprasView.vue'),
+      meta: { requiresAuth: true, roles: ['cliente'] },
+    },
+    {
       path: '/dashboard',
       component: () => import('../views/DashboardView.vue'),
       meta: { requiresAuth: true, roles: ['admin', 'vendedor'] },
