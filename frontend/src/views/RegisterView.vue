@@ -63,10 +63,10 @@ async function handleRegister() {
 onMounted(() => {
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-  tl.from(illustrationRef.value!, { x: -60, opacity: 0, duration: 0.6 })
-    .from(formRef.value!, { x: 60, opacity: 0, duration: 0.6 }, '<0.1')
-    .from('.register-field', { y: 20, opacity: 0, duration: 0.3, stagger: 0.05 }, '-=0.3')
-    .from('.register-btn', { y: 15, opacity: 0, duration: 0.3 }, '-=0.1')
+  tl.from(illustrationRef.value!, { x: -60, duration: 0.6 })
+    .from(formRef.value!, { x: 60, duration: 0.6 }, '<0.1')
+    .from('.register-field', { y: 20, duration: 0.3, stagger: 0.05 }, '-=0.3')
+    .from('.register-btn', { y: 15, duration: 0.3 }, '-=0.1')
 })
 </script>
 
@@ -81,22 +81,29 @@ onMounted(() => {
       <div class="absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-accent/15 blur-3xl" />
 
       <div class="relative z-10 text-center max-w-md">
-        <div class="text-8xl mb-8">📖</div>
+        <div class="grid grid-cols-3 gap-3 mb-8">
+          <div class="aspect-[2/3] rounded-lg overflow-hidden shadow-lg">
+            <img src="https://covers.openlibrary.org/b/isbn/9781569319208-L.jpg" alt="Cover" class="h-full w-full object-cover" loading="lazy" />
+          </div>
+          <div class="aspect-[2/3] rounded-lg overflow-hidden shadow-lg">
+            <img src="https://covers.openlibrary.org/b/isbn/9780747532699-L.jpg" alt="Cover" class="h-full w-full object-cover" loading="lazy" />
+          </div>
+          <div class="aspect-[2/3] rounded-lg overflow-hidden shadow-lg">
+            <img src="https://covers.openlibrary.org/b/isbn/9781612620244-L.jpg" alt="Cover" class="h-full w-full object-cover" loading="lazy" />
+          </div>
+        </div>
         <h2 class="text-3xl font-bold text-foreground mb-4">Unete a la comunidad</h2>
         <p class="text-muted-foreground text-lg leading-relaxed">
           Registrate para acceder al catalogo completo, realizar compras y llevar un historial de tus lecturas favoritas.
         </p>
         <div class="mt-10 grid grid-cols-3 gap-4">
           <div class="p-3 rounded-xl bg-background/60 backdrop-blur border">
-            <div class="text-2xl mb-1">📚</div>
             <div class="text-xs text-muted-foreground">Catalogo completo</div>
           </div>
           <div class="p-3 rounded-xl bg-background/60 backdrop-blur border">
-            <div class="text-2xl mb-1">🛒</div>
             <div class="text-xs text-muted-foreground">Compra facil</div>
           </div>
           <div class="p-3 rounded-xl bg-background/60 backdrop-blur border">
-            <div class="text-2xl mb-1">📋</div>
             <div class="text-xs text-muted-foreground">Tu historial</div>
           </div>
         </div>

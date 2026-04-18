@@ -15,7 +15,22 @@ const password = ref('')
 const error = ref('')
 const loading = ref(false)
 const formRef = ref<HTMLElement>()
-const illustrationRef = ref<HTMLElement>()
+const collageRef = ref<HTMLElement>()
+
+const coverImages = [
+  'https://covers.openlibrary.org/b/isbn/9781569319208-L.jpg',
+  'https://covers.openlibrary.org/b/isbn/9781569319017-L.jpg',
+  'https://covers.openlibrary.org/b/isbn/9781612620244-L.jpg',
+  'https://covers.openlibrary.org/b/isbn/9781593070205-L.jpg',
+  'https://covers.openlibrary.org/b/isbn/9780747532699-L.jpg',
+  'https://covers.openlibrary.org/b/isbn/9780451524935-L.jpg',
+  'https://covers.openlibrary.org/b/isbn/9780553293357-L.jpg',
+  'https://covers.openlibrary.org/b/isbn/9781563893421-L.jpg',
+  'https://covers.openlibrary.org/b/isbn/9781935429746-L.jpg',
+  'https://covers.openlibrary.org/b/isbn/9781569319222-L.jpg',
+  'https://covers.openlibrary.org/b/isbn/9781591160571-L.jpg',
+  'https://covers.openlibrary.org/b/isbn/9780747538486-L.jpg',
+]
 
 async function handleLogin() {
   error.value = ''
@@ -43,67 +58,56 @@ async function handleLogin() {
 onMounted(() => {
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-  tl.from(illustrationRef.value!, { x: -80, opacity: 0, duration: 0.7 })
-    .from(formRef.value!, { x: 60, opacity: 0, duration: 0.6 }, '<0.15')
-    .from('.login-title', { y: 25, opacity: 0, duration: 0.4 }, '-=0.3')
-    .from('.login-subtitle', { y: 15, opacity: 0, duration: 0.3 }, '-=0.2')
-    .from('.login-field', { y: 20, opacity: 0, duration: 0.3, stagger: 0.08 }, '-=0.15')
-    .from('.login-btn', { y: 15, opacity: 0, duration: 0.3 }, '-=0.1')
-    .from('.login-footer', { opacity: 0, duration: 0.3 }, '-=0.1')
+  tl.from(collageRef.value!, { x: -60, duration: 0.6 })
+    .from(formRef.value!, { x: 40, duration: 0.5 }, '<0.1')
+    .from('.login-title', { y: 20, duration: 0.3 }, '-=0.2')
+    .from('.login-subtitle', { y: 15, duration: 0.25 }, '-=0.15')
+    .from('.login-field', { y: 15, duration: 0.25, stagger: 0.06 }, '-=0.1')
+    .from('.login-btn', { y: 10, duration: 0.25 }, '-=0.05')
+    .from('.login-footer', { y: 10, duration: 0.25 }, '-=0.05')
 
-  gsap.to('.float-book', {
-    y: -12,
-    duration: 2.5,
+  gsap.to('.cover-float', {
+    y: -8,
+    duration: 3,
     ease: 'sine.inOut',
     repeat: -1,
     yoyo: true,
-    stagger: { each: 0.4 },
+    stagger: { each: 0.3 },
   })
 })
 </script>
 
 <template>
   <div class="min-h-screen flex">
-    <!-- Left - Branding & Illustration -->
+    <!-- Left - Cover collage -->
     <div
-      ref="illustrationRef"
-      class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/10 via-accent/5 to-primary/20 flex-col items-center justify-center p-12 relative overflow-hidden"
+      ref="collageRef"
+      class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/5 via-background to-accent/10 items-center justify-center p-10 relative overflow-hidden"
     >
       <div class="absolute -top-24 -left-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
       <div class="absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-accent/15 blur-3xl" />
-      <div class="absolute top-1/4 right-1/4 h-32 w-32 rounded-full bg-primary/5 blur-2xl" />
 
-      <div class="relative z-10 text-center max-w-lg">
-        <div class="flex items-center justify-center gap-6 mb-10">
-          <span class="float-book text-6xl">📚</span>
-          <span class="float-book text-5xl">📖</span>
-          <span class="float-book text-6xl">📕</span>
+      <div class="relative z-10 w-full max-w-lg">
+        <!-- Collage grid -->
+        <div class="grid grid-cols-4 gap-3">
+          <div
+            v-for="(src, i) in coverImages"
+            :key="i"
+            class="cover-float aspect-[2/3] rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105"
+          >
+            <img
+              :src="src"
+              alt="Cover"
+              class="h-full w-full object-cover"
+              loading="lazy"
+            />
+          </div>
         </div>
 
-        <h2 class="text-4xl font-extrabold text-foreground mb-4 leading-tight">
-          Tienda de Libros<br/>
-          <span class="text-primary">y Mangas</span>
-        </h2>
-        <p class="text-muted-foreground text-lg leading-relaxed">
-          Explora nuestro catalogo de libros, mangas, comics y revistas.
-          Gestiona inventario, ventas y reportes desde un solo lugar.
-        </p>
-
-        <div class="mt-12 flex justify-center gap-8">
-          <div class="text-center">
-            <div class="text-3xl font-bold text-primary">1000+</div>
-            <div class="text-xs text-muted-foreground mt-1">Productos</div>
-          </div>
-          <div class="h-12 w-px bg-border" />
-          <div class="text-center">
-            <div class="text-3xl font-bold text-primary">3</div>
-            <div class="text-xs text-muted-foreground mt-1">Roles</div>
-          </div>
-          <div class="h-12 w-px bg-border" />
-          <div class="text-center">
-            <div class="text-3xl font-bold text-primary">14</div>
-            <div class="text-xs text-muted-foreground mt-1">Tablas SQL</div>
-          </div>
+        <!-- Branding below collage -->
+        <div class="text-center mt-8">
+          <h2 class="text-2xl font-bold text-foreground">Tienda de Libros y Mangas</h2>
+          <p class="text-sm text-muted-foreground mt-1">Tu catalogo de libros, mangas, comics y revistas</p>
         </div>
       </div>
     </div>
@@ -113,8 +117,7 @@ onMounted(() => {
       <div ref="formRef" class="w-full max-w-sm">
         <!-- Mobile logo -->
         <div class="lg:hidden text-center mb-8">
-          <span class="text-5xl">📚</span>
-          <h2 class="text-xl font-bold text-foreground mt-2">Tienda de Libros y Mangas</h2>
+          <h2 class="text-xl font-bold text-foreground">Tienda de Libros y Mangas</h2>
         </div>
 
         <h1 class="login-title text-3xl font-bold text-foreground">Bienvenido</h1>
