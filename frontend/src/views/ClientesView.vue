@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import clienteService from '../services/cliente.service'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -19,11 +19,20 @@ const showForm = ref(false)
 const editing = ref<any | null>(null)
 const form = ref({ nombre: '', email: '', telefono: '', direccion: '' })
 const formErrors = ref<string[]>([])
+const page = ref(1)
+const perPage = 10
+
+const totalPages = computed(() => Math.max(1, Math.ceil(clientes.value.length / perPage)))
+const paginatedClientes = computed(() => {
+  const start = (page.value - 1) * perPage
+  return clientes.value.slice(start, start + perPage)
+})
 
 async function load() {
   try {
     const res = await clienteService.getAll()
     clientes.value = res.data
+    if (page.value > totalPages.value) page.value = totalPages.value
   } catch {
     useError('Error', 'No se pudieron cargar los clientes')
   }
@@ -119,7 +128,7 @@ onMounted(async () => {
           </TableRow>
         </TableHeader>
         <TableBody class="clientes-table">
-          <TableRow v-for="c in clientes" :key="c.id_cliente" class="transition-colors duration-150 hover:bg-muted/50">
+          <TableRow v-for="c in paginatedClientes" :key="c.id_cliente" class="transition-colors duration-150 hover:bg-muted/50">
             <TableCell class="font-mono text-muted-foreground text-xs">{{ c.id_cliente }}</TableCell>
             <TableCell class="font-medium">{{ c.nombre }}</TableCell>
             <TableCell class="text-muted-foreground">{{ c.email ?? '-' }}</TableCell>
@@ -149,6 +158,13 @@ onMounted(async () => {
           </TableRow>
         </TableBody>
       </Table>
+    </div>
+    <div class="mt-4 flex items-center justify-between">
+      <p class="text-sm text-muted-foreground">Pagina {{ page }} de {{ totalPages }}</p>
+      <div class="flex items-center gap-2">
+        <Button variant="outline" size="sm" :disabled="page <= 1" @click="page--">Anterior</Button>
+        <Button variant="outline" size="sm" :disabled="page >= totalPages" @click="page++">Siguiente</Button>
+      </div>
     </div>
 
     <Dialog :open="showForm" @update:open="(v: boolean) => showForm = v">
