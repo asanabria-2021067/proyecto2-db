@@ -153,27 +153,29 @@ const chartOptions = {
             <CardTitle class="text-sm font-medium text-muted-foreground uppercase tracking-wide">Stock Bajo (5 o menos)</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow class="hover:bg-transparent">
-                  <TableHead>Producto</TableHead>
-                  <TableHead class="text-right">Stock</TableHead>
-                  <TableHead class="text-right">Precio</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow v-for="p in stockBajo" :key="p.id_producto" class="transition-colors duration-150 hover:bg-muted/50">
-                  <TableCell class="font-medium">{{ p.titulo }}</TableCell>
-                  <TableCell class="text-right">
-                    <Badge variant="destructive">{{ p.stock }}</Badge>
-                  </TableCell>
-                  <TableCell class="text-right font-mono">Q{{ Number(p.precio).toFixed(2) }}</TableCell>
-                </TableRow>
-                <TableRow v-if="!stockBajo.length">
-                  <TableCell colspan="3" class="text-center text-muted-foreground py-6">Sin productos con stock bajo</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+            <div class="max-h-80 overflow-y-auto rounded-lg border">
+              <Table>
+                <TableHeader>
+                  <TableRow class="hover:bg-transparent">
+                    <TableHead>Producto</TableHead>
+                    <TableHead class="text-right">Stock</TableHead>
+                    <TableHead class="text-right">Precio</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow v-for="p in stockBajo" :key="p.id_producto" class="transition-colors duration-150 hover:bg-muted/50">
+                    <TableCell class="font-medium">{{ p.titulo }}</TableCell>
+                    <TableCell class="text-right">
+                      <Badge variant="destructive">{{ p.stock }}</Badge>
+                    </TableCell>
+                    <TableCell class="text-right font-mono">Q{{ Number(p.precio).toFixed(2) }}</TableCell>
+                  </TableRow>
+                  <TableRow v-if="!stockBajo.length">
+                    <TableCell colspan="3" class="text-center text-muted-foreground py-6">Sin productos con stock bajo</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
 
@@ -182,25 +184,27 @@ const chartOptions = {
             <CardTitle class="text-sm font-medium text-muted-foreground uppercase tracking-wide">Productos No Vendidos</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow class="hover:bg-transparent">
-                  <TableHead>Producto</TableHead>
-                  <TableHead class="text-right">Stock</TableHead>
-                  <TableHead class="text-right">Precio</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow v-for="p in productosNoVendidos" :key="p.id_producto" class="transition-colors duration-150 hover:bg-muted/50">
-                  <TableCell class="font-medium">{{ p.titulo }}</TableCell>
-                  <TableCell class="text-right">{{ p.stock }}</TableCell>
-                  <TableCell class="text-right font-mono">Q{{ Number(p.precio).toFixed(2) }}</TableCell>
-                </TableRow>
-                <TableRow v-if="!productosNoVendidos.length">
-                  <TableCell colspan="3" class="text-center text-muted-foreground py-6">Todos los productos se han vendido</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+            <div class="max-h-80 overflow-y-auto rounded-lg border">
+              <Table>
+                <TableHeader>
+                  <TableRow class="hover:bg-transparent">
+                    <TableHead>Producto</TableHead>
+                    <TableHead class="text-right">Stock</TableHead>
+                    <TableHead class="text-right">Precio</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow v-for="p in productosNoVendidos" :key="p.id_producto" class="transition-colors duration-150 hover:bg-muted/50">
+                    <TableCell class="font-medium">{{ p.titulo }}</TableCell>
+                    <TableCell class="text-right">{{ p.stock }}</TableCell>
+                    <TableCell class="text-right font-mono">Q{{ Number(p.precio).toFixed(2) }}</TableCell>
+                  </TableRow>
+                  <TableRow v-if="!productosNoVendidos.length">
+                    <TableCell colspan="3" class="text-center text-muted-foreground py-6">Todos los productos se han vendido</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
 
@@ -209,24 +213,26 @@ const chartOptions = {
             <CardTitle class="text-sm font-medium text-muted-foreground uppercase tracking-wide">Ranking Clientes (CTE)</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow class="hover:bg-transparent">
-                  <TableHead class="w-10">#</TableHead>
-                  <TableHead>Cliente</TableHead>
-                  <TableHead class="text-right">Compras</TableHead>
-                  <TableHead class="text-right">Total</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow v-for="c in rankingClientes" :key="c.id_cliente" class="transition-colors duration-150 hover:bg-muted/50">
-                  <TableCell class="font-mono text-muted-foreground">{{ c.ranking }}</TableCell>
-                  <TableCell class="font-medium">{{ c.nombre }}</TableCell>
-                  <TableCell class="text-right">{{ c.cantidad_compras }}</TableCell>
-                  <TableCell class="text-right font-mono">Q{{ Number(c.total_gastado).toFixed(2) }}</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+            <div class="max-h-80 overflow-y-auto rounded-lg border">
+              <Table>
+                <TableHeader>
+                  <TableRow class="hover:bg-transparent">
+                    <TableHead class="w-10">#</TableHead>
+                    <TableHead>Cliente</TableHead>
+                    <TableHead class="text-right">Compras</TableHead>
+                    <TableHead class="text-right">Total</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow v-for="c in rankingClientes" :key="c.id_cliente" class="transition-colors duration-150 hover:bg-muted/50">
+                    <TableCell class="font-mono text-muted-foreground">{{ c.ranking }}</TableCell>
+                    <TableCell class="font-medium">{{ c.nombre }}</TableCell>
+                    <TableCell class="text-right">{{ c.cantidad_compras }}</TableCell>
+                    <TableCell class="text-right font-mono">Q{{ Number(c.total_gastado).toFixed(2) }}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </div>
