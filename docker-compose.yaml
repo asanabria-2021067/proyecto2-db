@@ -9,12 +9,27 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./database:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U proy2 -d tienda_libros"]
       interval: 5s
       timeout: 5s
       retries: 5
+
+  db-init:
+    image: postgres:16-alpine
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./database:/sql
+    environment:
+      PGPASSWORD: secret
+    command: >
+      sh -c "
+      psql -h db -U proy2 -d tienda_libros -v ON_ERROR_STOP=1 -c 'DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;' &&
+      psql -h db -U proy2 -d tienda_libros -v ON_ERROR_STOP=1 -f /sql/01-ddl.sql &&
+      psql -h db -U proy2 -d tienda_libros -v ON_ERROR_STOP=1 -f /sql/02-seed.sql
+      "
 
   backend:
     build:
@@ -35,8 +50,8 @@ services:
       - JWT_SECRET=mi_secreto_jwt_super_seguro_2024
       - PORT=3000
     depends_on:
-      db:
-        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     command: sh -c "npm install && npm run dev"
 
   frontend:

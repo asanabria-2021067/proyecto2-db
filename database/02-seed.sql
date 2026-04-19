@@ -50,9 +50,21 @@ INSERT INTO producto (titulo, descripcion, precio, stock, isbn, anio_publicacion
 	('Dragon Ball Vol. 2', 'Goku entrena con el maestro Roshi', 12.99, 20, '978-84-679-0010-3', 1984, 'https://covers.openlibrary.org/b/isbn/9781569319222-L.jpg', 1, 1),
 	('One Piece Vol. 2', 'Luffy recluta a Roronoa Zoro', 11.99, 28, '978-84-679-0011-0', 1997, 'https://covers.openlibrary.org/b/isbn/9781591160571-L.jpg', 1, 5),
 	('Harry Potter y la Camara Secreta', 'El segundo ano de Harry en Hogwarts', 19.99, 38, '978-84-679-0012-7', 1998, 'https://covers.openlibrary.org/b/isbn/9780747538486-L.jpg', 3, 4),
-	('National Geographic Enero', 'Edicion especial de naturaleza', 8.99, 50, '978-84-679-0013-4', 2024, 'https://covers.openlibrary.org/b/isbn/9780792236733-L.jpg', 6, 3),
+	('National Geographic Enero', 'Edicion especial de naturaleza', 8.99, 50, '978-84-679-0013-4', 2024, 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80', 6, 3),
 	('Shingeki no Kyojin Vol. 2', 'La batalla por Trost continua', 13.50, 3, '978-84-679-0014-1', 2010, 'https://covers.openlibrary.org/b/isbn/9781612620251-L.jpg', 1, 1),
-	('Fundacion e Imperio', 'La continuacion de la saga Fundacion', 16.99, 2, '978-84-679-0015-8', 1952, 'https://covers.openlibrary.org/b/isbn/9780553293371-L.jpg', 4, 3);
+	('Fundacion e Imperio', 'La continuacion de la saga Fundacion', 16.99, 2, '978-84-679-0015-8', 1952, 'https://covers.openlibrary.org/b/isbn/9780553293371-L.jpg', 4, 3),
+	('Dragon Ball Vol. 3', 'El torneo de artes marciales se vuelve intenso', 12.99, 21, '978-84-679-0016-5', 1985, 'https://covers.openlibrary.org/b/isbn/9781569319239-L.jpg', 1, 1),
+	('One Piece Vol. 3', 'Aparecen nuevos piratas en el East Blue', 11.99, 26, '978-84-679-0017-2', 1998, 'https://covers.openlibrary.org/b/isbn/9781421536255-L.jpg', 1, 5),
+	('Shingeki no Kyojin Vol. 3', 'Secretos detras de los titanes salen a la luz', 13.50, 17, '978-84-679-0018-9', 2011, 'https://covers.openlibrary.org/b/isbn/9781612620268-L.jpg', 1, 1),
+	('Berserk Vol. 2', 'Guts enfrenta a los apostoles en una noche oscura', 14.99, 10, '978-84-679-0019-6', 1990, 'https://covers.openlibrary.org/b/isbn/9781593070212-L.jpg', 2, 2),
+	('Harry Potter y el Prisionero de Azkaban', 'El pasado de Sirius Black pone en peligro Hogwarts', 20.99, 34, '978-84-679-0020-2', 1999, 'https://covers.openlibrary.org/b/isbn/9780747542155-L.jpg', 3, 4),
+	('Rebelion en la Granja', 'Satira politica de George Orwell en una granja', 13.99, 29, '978-84-679-0021-9', 1945, 'https://covers.openlibrary.org/b/isbn/9780451526342-L.jpg', 4, 3),
+	('Fundacion y Tierra', 'La busqueda del origen de la humanidad', 17.50, 13, '978-84-679-0022-6', 1986, 'https://covers.openlibrary.org/b/isbn/9780553293388-L.jpg', 4, 3),
+	('Batman: Year One', 'El origen moderno del caballero oscuro en Gotham', 22.50, 14, '978-84-679-0023-3', 1987, 'https://covers.openlibrary.org/b/isbn/9781401207526-L.jpg', 5, 2),
+	('Sailor Moon Vol. 2', 'Nuevas sailor scouts se unen a la batalla', 12.50, 19, '978-84-679-0024-0', 1992, 'https://covers.openlibrary.org/b/isbn/9781935429753-L.jpg', 1, 1),
+	('Scientific American Febrero', 'Tendencias de ciencia y tecnologia del ano', 9.50, 45, '978-84-679-0025-7', 2024, 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1200&q=80', 6, 3),
+	('National Geographic Exploradores', 'Vida salvaje y expediciones del planeta', 9.20, 41, '978-84-679-0026-4', 2024, 'https://covers.openlibrary.org/b/isbn/9781426219696-L.jpg', 6, 3),
+	('One Piece Vol. 4', 'La tripulacion de Luffy se fortalece para Grand Line', 11.99, 24, '978-84-679-0027-1', 1998, 'https://covers.openlibrary.org/b/isbn/9781421536262-L.jpg', 1, 5);
 
 -- Producto-Autor
 INSERT INTO producto_autor (producto_id, autor_id) VALUES
@@ -64,7 +76,16 @@ INSERT INTO producto_autor (producto_id, autor_id) VALUES
 	(6, 5),
 	(7, 6), (15, 6),
 	(8, 7),
-	(9, 8);
+	(9, 8),
+	(16, 1),
+	(17, 2), (27, 2),
+	(18, 3),
+	(19, 1),
+	(20, 4),
+	(21, 5),
+	(22, 6),
+	(23, 7),
+	(24, 8);
 
 -- Proveedores
 INSERT INTO proveedor (nombre, contacto, telefono, email, direccion) VALUES
