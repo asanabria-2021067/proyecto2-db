@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
 import api from '../services/api'
 import { useAuthStore } from '../stores/auth.store'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
@@ -13,6 +13,7 @@ import { useConfirm, useSuccess, useError } from '@/composables/useSwal'
 import gsap from 'gsap'
 
 const auth = useAuthStore()
+const router = useRouter()
 const productos = ref<any[]>([])
 const search = ref('')
 const tipoFilter = ref('all')
@@ -80,12 +81,13 @@ async function comprar(producto: any) {
 
 onMounted(async () => {
   await load()
-  gsap.from('.catalog-item', {
-    y: 25,
-    opacity: 0,
-    duration: 0.25,
-    stagger: 0.03,
-    ease: 'power2.out',
+  nextTick(() => {
+    gsap.from('.catalog-item', {
+      y: 30,
+      duration: 0.35,
+      stagger: 0.04,
+      ease: 'power2.out',
+    })
   })
 })
 </script>
@@ -97,6 +99,9 @@ onMounted(async () => {
         <h1 class="text-2xl font-bold">Catalogo</h1>
         <Badge variant="secondary" class="text-xs">{{ filtered.length }} productos</Badge>
       </div>
+      <Button v-if="!auth.isLoggedIn" variant="outline" size="sm" @click="router.push('/')">
+        Volver al inicio
+      </Button>
     </div>
 
     <div class="flex gap-3 mb-6">
@@ -114,51 +119,72 @@ onMounted(async () => {
 
     <div v-if="loading" class="text-center py-16 text-muted-foreground">Cargando catalogo...</div>
 
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-      <Card
+    <div v-else class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+      <div
         v-for="p in filtered"
         :key="p.id_producto"
-        class="catalog-item group overflow-hidden flex flex-col border transition-all duration-250 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1.5 hover:border-primary/30"
+        class="catalog-item group"
       >
-        <div v-if="p.imagen_url" class="aspect-[3/4] overflow-hidden bg-muted">
+        <!-- Cover image -->
+        <div class="relative aspect-[2/3] rounded-xl overflow-hidden shadow-md transition-all duration-300 group-hover:shadow-xl group-hover:shadow-primary/15 group-hover:-translate-y-2">
           <img
+            v-if="p.imagen_url"
             :src="p.imagen_url"
             :alt="p.titulo"
-            class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            loading="lazy"
           />
-        </div>
-        <div v-else class="aspect-[3/4] bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center text-5xl text-muted-foreground/50 transition-all duration-300 group-hover:from-primary/5 group-hover:to-accent/5">
-          📖
-        </div>
-        <CardContent class="pt-4 flex-1">
-          <Badge variant="secondary" class="mb-2 transition-colors duration-200 group-hover:bg-primary/10 group-hover:text-primary">{{ p.tipo }}</Badge>
-          <h3 class="font-semibold text-foreground leading-tight transition-colors duration-200 group-hover:text-primary">{{ p.titulo }}</h3>
-          <p class="text-xs text-muted-foreground mt-1">{{ p.editorial }} | {{ p.categoria }}</p>
-          <p v-if="p.autores" class="text-xs text-muted-foreground italic mt-1">{{ p.autores }}</p>
-          <p v-if="p.descripcion" class="text-xs text-muted-foreground mt-2 line-clamp-2">{{ p.descripcion }}</p>
-        </CardContent>
-        <CardFooter class="flex justify-between items-center border-t pt-3 transition-colors duration-200 group-hover:bg-muted/30">
-          <div>
-            <span class="text-lg font-bold text-primary">Q{{ Number(p.precio).toFixed(2) }}</span>
-            <Badge
-              :variant="p.stock <= 5 ? 'destructive' : 'outline'"
-              class="text-xs ml-2"
-            >
-              {{ p.stock > 0 ? `${p.stock} disp.` : 'Agotado' }}
-            </Badge>
-          </div>
-          <Button
-            v-if="auth.isLoggedIn && auth.rol === 'cliente' && p.stock > 0"
-            size="sm"
-            class="transition-all duration-200 hover:scale-105 hover:shadow-md"
-            :disabled="buying === p.id_producto"
-            @click="comprar(p)"
+          <div
+            v-else
+            class="h-full w-full bg-gradient-to-br from-primary/20 via-accent/10 to-muted flex flex-col items-center justify-center gap-2"
           >
-            {{ buying === p.id_producto ? 'Comprando...' : 'Comprar' }}
-          </Button>
-          <Badge v-else-if="p.stock === 0" variant="destructive" class="text-xs">Agotado</Badge>
-        </CardFooter>
-      </Card>
+            <span class="text-xs text-muted-foreground font-medium px-3 text-center">{{ p.titulo }}</span>
+          </div>
+
+          <!-- Overlay on hover -->
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+            <p v-if="p.descripcion" class="text-white/80 text-xs line-clamp-3 mb-2">{{ p.descripcion }}</p>
+            <div class="flex items-center justify-between">
+              <span class="text-white font-bold text-lg">Q{{ Number(p.precio).toFixed(2) }}</span>
+              <Button
+                v-if="auth.isLoggedIn && auth.rol === 'cliente' && p.stock > 0"
+                size="sm"
+                class="h-7 text-xs transition-all duration-200 hover:scale-105"
+                :disabled="buying === p.id_producto"
+                @click.stop="comprar(p)"
+              >
+                {{ buying === p.id_producto ? '...' : 'Comprar' }}
+              </Button>
+            </div>
+          </div>
+
+          <!-- Stock badge -->
+          <Badge
+            :variant="p.stock <= 5 ? 'destructive' : 'secondary'"
+            class="absolute top-2 right-2 text-[10px] opacity-90"
+          >
+            {{ p.stock > 0 ? `${p.stock} disp.` : 'Agotado' }}
+          </Badge>
+
+          <!-- Type badge -->
+          <Badge
+            variant="secondary"
+            class="absolute top-2 left-2 text-[10px] bg-black/50 text-white border-0"
+          >
+            {{ p.tipo }}
+          </Badge>
+        </div>
+
+        <!-- Minimal info below image -->
+        <div class="mt-2.5 px-0.5">
+          <h3 class="font-semibold text-sm text-foreground leading-tight line-clamp-2 transition-colors duration-200 group-hover:text-primary">{{ p.titulo }}</h3>
+          <p v-if="p.autores" class="text-xs text-muted-foreground mt-0.5 truncate">{{ p.autores }}</p>
+          <div class="flex items-center justify-between mt-1">
+            <span class="text-sm font-bold text-primary">Q{{ Number(p.precio).toFixed(2) }}</span>
+            <span class="text-[10px] text-muted-foreground">{{ p.editorial }}</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <p v-if="!loading && filtered.length === 0" class="text-center py-16 text-muted-foreground">
