@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { Bar, Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -95,12 +95,13 @@ async function exportCsv() {
 
 onMounted(async () => {
   await load()
-  gsap.from('.dashboard-card', {
-    y: 20,
-    opacity: 0,
-    duration: 0.25,
-    stagger: 0.05,
-    ease: 'power2.out',
+  nextTick(() => {
+    gsap.from('.dashboard-card', {
+      y: 20,
+      duration: 0.25,
+      stagger: 0.05,
+      ease: 'power2.out',
+    })
   })
 })
 

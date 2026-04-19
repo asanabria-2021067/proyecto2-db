@@ -33,16 +33,16 @@ async function logout() {
 }
 
 const adminLinks = [
-  { to: '/dashboard', label: 'Dashboard', icon: '📊' },
-  { to: '/productos', label: 'Productos', icon: '📦' },
-  { to: '/clientes', label: 'Clientes', icon: '👥' },
-  { to: '/ventas', label: 'Ventas', icon: '💰' },
-  { to: '/catalogo', label: 'Catalogo', icon: '📚' },
+  { to: '/dashboard', label: 'Dashboard' },
+  { to: '/productos', label: 'Productos' },
+  { to: '/clientes', label: 'Clientes' },
+  { to: '/ventas', label: 'Ventas' },
+  { to: '/catalogo', label: 'Catalogo' },
 ]
 
 const clienteLinks = [
-  { to: '/catalogo', label: 'Catalogo', icon: '📚' },
-  { to: '/mis-compras', label: 'Mis Compras', icon: '🛒' },
+  { to: '/catalogo', label: 'Catalogo' },
+  { to: '/mis-compras', label: 'Mis Compras' },
 ]
 
 const visibleLinks = computed(() => {
@@ -59,7 +59,6 @@ const brandTarget = computed(() => {
 onMounted(() => {
   gsap.from(navRef.value!, {
     y: -20,
-    opacity: 0,
     duration: 0.3,
     ease: 'power2.out',
   })
@@ -71,7 +70,6 @@ onMounted(() => {
     <div class="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4 sm:px-6">
       <!-- Brand -->
       <RouterLink :to="brandTarget" class="group flex items-center gap-2 text-lg font-bold text-foreground transition-colors duration-200 hover:text-primary">
-        <span class="text-xl transition-transform duration-200 group-hover:scale-110">📚</span>
         <span>Tienda de Libros</span>
       </RouterLink>
 
@@ -86,7 +84,6 @@ onMounted(() => {
           class="group relative px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md transition-all duration-200 hover:text-foreground hover:bg-accent/80 hover:shadow-sm"
           active-class="!text-primary !bg-primary/10 !shadow-sm"
         >
-          <span class="mr-1.5 transition-transform duration-200 group-hover:scale-110 inline-block">{{ link.icon }}</span>
           {{ link.label }}
         </RouterLink>
       </div>
