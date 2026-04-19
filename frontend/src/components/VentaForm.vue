@@ -142,7 +142,7 @@ function handleOpenChange(val: boolean) {
             <TableBody>
               <TableRow v-for="(item, i) in items" :key="i" class="transition-colors duration-150 hover:bg-muted/50">
                 <TableCell>
-                  <Select :model-value="item.producto_id" @update:model-value="(v: string) => onProductoChange(i, v)">
+                  <Select :model-value="item.producto_id" @update:model-value="(v) => onProductoChange(i, String(v ?? ''))">
                     <SelectTrigger>
                       <SelectValue placeholder="Seleccionar..." />
                     </SelectTrigger>
