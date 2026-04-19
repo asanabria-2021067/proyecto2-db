@@ -40,8 +40,6 @@ const categorias = ref<any[]>([])
 const editoriales = ref<any[]>([])
 const autores = ref<any[]>([])
 const errors = ref<string[]>([])
-const imagenTab = ref<'url' | 'upload'>('url')
-const uploading = ref(false)
 
 onMounted(async () => {
   const [catRes, edRes, autRes] = await Promise.all([
@@ -70,24 +68,6 @@ watch(() => props.producto, (p) => {
     }
   }
 }, { immediate: true })
-
-async function handleFileUpload(event: Event) {
-  const file = (event.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  uploading.value = true
-  try {
-    const fd = new FormData()
-    fd.append('imagen', file)
-    const res = await api.post('/upload', fd, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
-    form.value.imagen_url = res.data.url
-  } catch {
-    errors.value = ['Error al subir imagen']
-  } finally {
-    uploading.value = false
-  }
-}
 
 function validate(): boolean {
   errors.value = []
@@ -195,25 +175,9 @@ function handleOpenChange(val: boolean) {
           </select>
         </div>
 
-        <!-- Image upload -->
         <div class="space-y-2">
-          <Label>Imagen del producto</Label>
-          <div class="flex gap-2 mb-2">
-            <Button
-              type="button"
-              :variant="imagenTab === 'url' ? 'default' : 'outline'"
-              size="sm"
-              class="transition-all duration-200"
-              @click="imagenTab = 'url'"
-            >
-              URL
-            </Button>
-          </div>
-          <Input v-if="imagenTab === 'url'" v-model="form.imagen_url" placeholder="https://..." />
-          <div v-else>
-            <Input type="file" accept="image/*" @change="handleFileUpload" />
-            <p v-if="uploading" class="text-xs text-muted-foreground mt-1">Subiendo...</p>
-          </div>
+          <Label>Imagen (URL)</Label>
+          <Input v-model="form.imagen_url" placeholder="https://covers.openlibrary.org/b/isbn/..." />
           <img v-if="form.imagen_url" :src="form.imagen_url" class="mt-2 h-24 w-24 object-cover rounded-md border" />
         </div>
 
