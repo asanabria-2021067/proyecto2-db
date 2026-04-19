@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
 import { Button } from '@/components/ui/button'
 import { Menu } from 'lucide-vue-next'
-import gsap from 'gsap'
 
 const auth = useAuthStore()
 const router = useRouter()
 const route = useRoute()
-const navRef = ref<HTMLElement>()
 const mobileOpen = ref(false)
-let ctx: gsap.Context | undefined
 
 const ctaLabel = computed(() => (auth.isLoggedIn ? 'Mi panel' : 'Iniciar sesion'))
 
@@ -27,30 +24,10 @@ watch(
   },
 )
 
-onMounted(() => {
-  if (!navRef.value) return
-  ctx = gsap.context(() => {
-    gsap.from('.public-nav-shell', {
-      y: -22,
-      duration: 0.35,
-      ease: 'power2.out',
-    })
-    gsap.from('.public-nav-link', {
-      y: -10,
-      duration: 0.25,
-      ease: 'power2.out',
-      stagger: 0.05,
-      delay: 0.07,
-    })
-  }, navRef.value)
-})
-
-onUnmounted(() => ctx?.revert())
 </script>
 
 <template>
   <header
-    ref="navRef"
     class="sticky top-0 z-50 border-b border-white/40 bg-background/85 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70"
   >
     <div class="public-nav-shell mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:px-6">
@@ -58,12 +35,12 @@ onUnmounted(() => ctx?.revert())
         <span>Tienda de Libros y mangas</span>
       </RouterLink>
 
-      <div class="hidden flex-1 items-center gap-1 pl-4 md:flex">
+      <div class="hidden flex-1 items-center gap-1 pl-2 md:flex">
         <RouterLink
           v-for="link in links"
           :key="link.to"
           :to="link.to"
-          class="public-nav-link inline-flex h-9 items-center rounded-md px-3 text-sm font-semibold leading-none text-muted-foreground transition-all duration-200 hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
+          class="inline-flex h-9 transform-none items-center rounded-md px-3 text-sm font-semibold leading-none text-muted-foreground transition-all duration-200 hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
           active-class="!bg-primary/15 !text-primary shadow-sm"
         >
           {{ link.label }}

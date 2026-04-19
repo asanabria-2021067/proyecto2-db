@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, computed, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useAuthStore } from '../stores/auth.store'
 import { useCartStore } from '../stores/cart.store'
 import { useRoute, useRouter } from 'vue-router'
@@ -17,15 +17,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useConfirm } from '@/composables/useSwal'
-import gsap from 'gsap'
 
 const auth = useAuthStore()
 const cart = useCartStore()
 const router = useRouter()
 const route = useRoute()
-const navRef = ref<HTMLElement>()
 const mobileOpen = ref(false)
-let ctx: gsap.Context | undefined
 
 async function logout() {
   const result = await useConfirm({
@@ -64,26 +61,6 @@ const brandTarget = computed(() => {
   return '/catalogo'
 })
 
-onMounted(() => {
-  if (!navRef.value) return
-  ctx = gsap.context(() => {
-    gsap.from('.private-nav-shell', {
-      y: -24,
-      duration: 0.35,
-      ease: 'power2.out',
-    })
-    gsap.from('.private-nav-link', {
-      y: -8,
-      duration: 0.25,
-      stagger: 0.04,
-      ease: 'power2.out',
-      delay: 0.06,
-    })
-  }, navRef.value)
-})
-
-onUnmounted(() => ctx?.revert())
-
 watch(
   () => route.path,
   () => {
@@ -94,10 +71,9 @@ watch(
 
 <template>
   <nav
-    ref="navRef"
     class="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-xl"
   >
-    <div class="private-nav-shell mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
+    <div class="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
       <RouterLink
         :to="brandTarget"
         class="group flex items-center gap-2 text-base font-bold tracking-tight text-foreground transition-colors duration-200 hover:text-primary sm:text-lg"
@@ -112,7 +88,7 @@ watch(
           v-for="link in visibleLinks"
           :key="link.to"
           :to="link.to"
-          class="private-nav-link inline-flex h-9 items-center rounded-md px-3 text-sm font-semibold leading-none text-muted-foreground transition-all duration-200 hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
+          class="inline-flex h-9 transform-none items-center rounded-md px-3 text-sm font-semibold leading-none text-muted-foreground transition-all duration-200 hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
           active-class="!bg-primary/10 !text-primary shadow-sm"
         >
           {{ link.label }}
