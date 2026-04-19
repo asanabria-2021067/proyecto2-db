@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import ventaService from '../services/venta.service'
 import VentaForm from '../components/VentaForm.vue'
 import { Button } from '@/components/ui/button'
@@ -15,11 +15,20 @@ const showForm = ref(false)
 const expandedId = ref<number | null>(null)
 const detalles = ref<Record<number, any[]>>({})
 const loadingDetalle = ref<number | null>(null)
+const page = ref(1)
+const perPage = 10
+
+const totalPages = computed(() => Math.max(1, Math.ceil(ventas.value.length / perPage)))
+const paginatedVentas = computed(() => {
+  const start = (page.value - 1) * perPage
+  return ventas.value.slice(start, start + perPage)
+})
 
 async function load() {
   try {
     const res = await ventaService.getAll()
     ventas.value = res.data
+    if (page.value > totalPages.value) page.value = totalPages.value
   } catch {
     useError('Error', 'No se pudieron cargar las ventas')
   }
@@ -94,7 +103,7 @@ onMounted(async () => {
           </TableRow>
         </TableHeader>
         <TableBody class="ventas-table">
-          <template v-for="v in ventas" :key="v.id_venta">
+          <template v-for="v in paginatedVentas" :key="v.id_venta">
             <TableRow class="transition-colors duration-150 hover:bg-muted/50 cursor-pointer" @click="toggleDetalle(v.id_venta)">
               <TableCell class="font-mono text-muted-foreground text-xs">{{ v.id_venta }}</TableCell>
               <TableCell>{{ new Date(v.fecha).toLocaleDateString('es-GT', { year: 'numeric', month: 'short', day: 'numeric' }) }}</TableCell>
@@ -146,6 +155,13 @@ onMounted(async () => {
           </template>
         </TableBody>
       </Table>
+    </div>
+    <div class="mt-4 flex items-center justify-between">
+      <p class="text-sm text-muted-foreground">Pagina {{ page }} de {{ totalPages }}</p>
+      <div class="flex items-center gap-2">
+        <Button variant="outline" size="sm" :disabled="page <= 1" @click="page--">Anterior</Button>
+        <Button variant="outline" size="sm" :disabled="page >= totalPages" @click="page++">Siguiente</Button>
+      </div>
     </div>
 
     <VentaForm v-if="showForm" @save="save" @cancel="showForm = false" />

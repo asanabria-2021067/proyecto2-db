@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import productoService from '../services/producto.service'
 import ProductoForm from '../components/ProductoForm.vue'
 import { Button } from '@/components/ui/button'
@@ -13,11 +13,20 @@ import gsap from 'gsap'
 const productos = ref<any[]>([])
 const showForm = ref(false)
 const editing = ref<any | null>(null)
+const page = ref(1)
+const perPage = 10
+
+const totalPages = computed(() => Math.max(1, Math.ceil(productos.value.length / perPage)))
+const paginatedProductos = computed(() => {
+  const start = (page.value - 1) * perPage
+  return productos.value.slice(start, start + perPage)
+})
 
 async function load() {
   try {
     const res = await productoService.getAll()
     productos.value = res.data
+    if (page.value > totalPages.value) page.value = totalPages.value
   } catch {
     useError('Error', 'No se pudieron cargar los productos')
   }
@@ -105,7 +114,7 @@ onMounted(async () => {
           </TableRow>
         </TableHeader>
         <TableBody class="productos-table">
-          <TableRow v-for="p in productos" :key="p.id_producto" class="transition-colors duration-150 hover:bg-muted/50">
+          <TableRow v-for="p in paginatedProductos" :key="p.id_producto" class="transition-colors duration-150 hover:bg-muted/50">
             <TableCell class="font-mono text-muted-foreground text-xs">{{ p.id_producto }}</TableCell>
             <TableCell class="font-medium">{{ p.titulo }}</TableCell>
             <TableCell>
@@ -141,6 +150,13 @@ onMounted(async () => {
           </TableRow>
         </TableBody>
       </Table>
+    </div>
+    <div class="mt-4 flex items-center justify-between">
+      <p class="text-sm text-muted-foreground">Pagina {{ page }} de {{ totalPages }}</p>
+      <div class="flex items-center gap-2">
+        <Button variant="outline" size="sm" :disabled="page <= 1" @click="page--">Anterior</Button>
+        <Button variant="outline" size="sm" :disabled="page >= totalPages" @click="page++">Siguiente</Button>
+      </div>
     </div>
 
     <ProductoForm
