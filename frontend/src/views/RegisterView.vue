@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.store'
 import api from '../services/api'
@@ -24,6 +24,24 @@ const error = ref('')
 const loading = ref(false)
 const formRef = ref<HTMLElement>()
 const illustrationRef = ref<HTMLElement>()
+const productos = ref<any[]>([])
+
+const coverImages = computed(() => {
+  const fallback = 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=900&q=80'
+  const urls = productos.value
+    .map((p) => p.imagen_url)
+    .filter((url): url is string => typeof url === 'string' && url.length > 0)
+  return urls.length ? urls : [fallback]
+})
+
+async function loadProductos() {
+  try {
+    const res = await api.get('/productos')
+    productos.value = res.data
+  } catch {
+    productos.value = []
+  }
+}
 
 async function handleRegister() {
   error.value = ''
@@ -60,7 +78,10 @@ async function handleRegister() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await loadProductos()
+  await nextTick()
+
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
   tl.from(illustrationRef.value!, { x: -60, duration: 0.6 })
@@ -81,16 +102,21 @@ onMounted(() => {
       <div class="absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-accent/15 blur-3xl" />
 
       <div class="relative z-10 text-center max-w-md">
-        <div class="grid grid-cols-3 gap-3 mb-8">
-          <div class="aspect-[2/3] rounded-lg overflow-hidden shadow-lg">
-            <img src="https://covers.openlibrary.org/b/isbn/9781569319208-L.jpg" alt="Cover" class="h-full w-full object-cover" loading="lazy" />
+        <div class="mb-8 max-h-[55vh] overflow-y-auto pr-1">
+          <div class="grid grid-cols-4 gap-3">
+          <div
+            v-for="(src, i) in coverImages"
+            :key="i"
+            class="aspect-[2/3] rounded-lg overflow-hidden shadow-lg"
+          >
+            <img
+              :src="src"
+              alt="Cover"
+              class="h-full w-full object-cover"
+              loading="lazy"
+            />
           </div>
-          <div class="aspect-[2/3] rounded-lg overflow-hidden shadow-lg">
-            <img src="https://covers.openlibrary.org/b/isbn/9780747532699-L.jpg" alt="Cover" class="h-full w-full object-cover" loading="lazy" />
-          </div>
-          <div class="aspect-[2/3] rounded-lg overflow-hidden shadow-lg">
-            <img src="https://covers.openlibrary.org/b/isbn/9781612620244-L.jpg" alt="Cover" class="h-full w-full object-cover" loading="lazy" />
-          </div>
+        </div>
         </div>
         <h2 class="text-3xl font-bold text-foreground mb-4">Unete a la comunidad</h2>
         <p class="text-muted-foreground text-lg leading-relaxed">
@@ -169,6 +195,14 @@ onMounted(() => {
             Ya tienes cuenta?
             <router-link to="/login" class="text-primary font-medium hover:underline">Inicia sesion</router-link>
           </p>
+          <Button
+            type="button"
+            variant="ghost"
+            class="w-full text-muted-foreground transition-all duration-200 hover:bg-primary/5 hover:text-primary"
+            @click="router.push('/')"
+          >
+            Volver a la landing
+          </Button>
         </form>
       </div>
     </div>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.store'
+import api from '../services/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -16,21 +17,24 @@ const error = ref('')
 const loading = ref(false)
 const formRef = ref<HTMLElement>()
 const collageRef = ref<HTMLElement>()
+const productos = ref<any[]>([])
 
-const coverImages = [
-  'https://covers.openlibrary.org/b/isbn/9781569319208-L.jpg',
-  'https://covers.openlibrary.org/b/isbn/9781569319017-L.jpg',
-  'https://covers.openlibrary.org/b/isbn/9781612620244-L.jpg',
-  'https://covers.openlibrary.org/b/isbn/9781593070205-L.jpg',
-  'https://covers.openlibrary.org/b/isbn/9780747532699-L.jpg',
-  'https://covers.openlibrary.org/b/isbn/9780451524935-L.jpg',
-  'https://covers.openlibrary.org/b/isbn/9780553293357-L.jpg',
-  'https://covers.openlibrary.org/b/isbn/9781563893421-L.jpg',
-  'https://covers.openlibrary.org/b/isbn/9781935429746-L.jpg',
-  'https://covers.openlibrary.org/b/isbn/9781569319222-L.jpg',
-  'https://covers.openlibrary.org/b/isbn/9781591160571-L.jpg',
-  'https://covers.openlibrary.org/b/isbn/9780747538486-L.jpg',
-]
+const coverImages = computed(() => {
+  const fallback = 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=900&q=80'
+  const urls = productos.value
+    .map((p) => p.imagen_url)
+    .filter((url): url is string => typeof url === 'string' && url.length > 0)
+  return urls.length ? urls : [fallback]
+})
+
+async function loadProductos() {
+  try {
+    const res = await api.get('/productos')
+    productos.value = res.data
+  } catch {
+    productos.value = []
+  }
+}
 
 async function handleLogin() {
   error.value = ''
@@ -55,7 +59,10 @@ async function handleLogin() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await loadProductos()
+  await nextTick()
+
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
   tl.from(collageRef.value!, { x: -60, duration: 0.6 })
@@ -89,7 +96,8 @@ onMounted(() => {
 
       <div class="relative z-10 w-full max-w-lg">
         <!-- Collage grid -->
-        <div class="grid grid-cols-4 gap-3">
+        <div class="max-h-[62vh] overflow-y-auto pr-1">
+          <div class="grid grid-cols-4 gap-3">
           <div
             v-for="(src, i) in coverImages"
             :key="i"
@@ -103,10 +111,11 @@ onMounted(() => {
             />
           </div>
         </div>
+        </div>
 
         <!-- Branding below collage -->
         <div class="text-center mt-8">
-          <h2 class="text-2xl font-bold text-foreground">Tienda de Libros y Mangas</h2>
+          <h2 class="text-2xl font-bold text-foreground">Manga Kura</h2>
           <p class="text-sm text-muted-foreground mt-1">Tu catalogo de libros, mangas, comics y revistas</p>
         </div>
       </div>
@@ -117,7 +126,7 @@ onMounted(() => {
       <div ref="formRef" class="w-full max-w-sm">
         <!-- Mobile logo -->
         <div class="lg:hidden text-center mb-8">
-          <h2 class="text-xl font-bold text-foreground">Tienda de Libros y Mangas</h2>
+          <h2 class="text-xl font-bold text-foreground">Manga Kura</h2>
         </div>
 
         <h1 class="login-title text-3xl font-bold text-foreground">Bienvenido</h1>
@@ -178,6 +187,14 @@ onMounted(() => {
               @click="router.push('/catalogo')"
             >
               Explorar catalogo sin cuenta
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              class="w-full text-muted-foreground transition-all duration-200 hover:bg-primary/5 hover:text-primary"
+              @click="router.push('/')"
+            >
+              Volver a la landing
             </Button>
           </div>
         </form>
