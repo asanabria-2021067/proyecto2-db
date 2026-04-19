@@ -64,7 +64,15 @@ INSERT INTO producto (titulo, descripcion, precio, stock, isbn, anio_publicacion
 	('Sailor Moon Vol. 2', 'Nuevas sailor scouts se unen a la batalla', 12.50, 19, '978-84-679-0024-0', 1992, 'https://covers.openlibrary.org/b/isbn/9781935429753-L.jpg', 1, 1),
 	('Scientific American Febrero', 'Tendencias de ciencia y tecnologia del ano', 9.50, 45, '978-84-679-0025-7', 2024, 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1200&q=80', 6, 3),
 	('National Geographic Exploradores', 'Vida salvaje y expediciones del planeta', 9.20, 41, '978-84-679-0026-4', 2024, 'https://covers.openlibrary.org/b/isbn/9781426219696-L.jpg', 6, 3),
-	('One Piece Vol. 4', 'La tripulacion de Luffy se fortalece para Grand Line', 11.99, 24, '978-84-679-0027-1', 1998, 'https://covers.openlibrary.org/b/isbn/9781421536262-L.jpg', 1, 5);
+	('One Piece Vol. 4', 'La tripulacion de Luffy se fortalece para Grand Line', 11.99, 24, '978-84-679-0027-1', 1998, 'https://covers.openlibrary.org/b/isbn/9781421536262-L.jpg', 1, 5),
+	('Dragon Ball Vol. 4', 'Goku sigue avanzando en el torneo de artes marciales', 12.99, 23, '978-84-679-0028-8', 1985, 'https://covers.openlibrary.org/b/isbn/9781569319246-L.jpg', 1, 1),
+	('One Piece Vol. 5', 'La tripulacion enfrenta nuevos enemigos en alta mar', 11.99, 22, '978-84-679-0029-5', 1999, 'https://covers.openlibrary.org/b/isbn/9781421536279-L.jpg', 1, 5),
+	('Shingeki no Kyojin Vol. 4', 'La estrategia de la legion se pone a prueba', 13.50, 16, '978-84-679-0030-1', 2011, 'https://covers.openlibrary.org/b/isbn/9781612622545-L.jpg', 1, 1),
+	('Berserk Vol. 3', 'La marca del sacrificio persigue a Guts', 14.99, 11, '978-84-679-0031-8', 1991, 'https://covers.openlibrary.org/b/isbn/9781593070229-L.jpg', 2, 2),
+	('Harry Potter y el Caliz de Fuego', 'El Torneo de los Tres Magos inicia en Hogwarts', 20.99, 31, '978-84-679-0032-5', 2000, 'https://covers.openlibrary.org/b/isbn/9780439139601-L.jpg', 3, 4),
+	('Fundacion y Caos', 'Nuevos conflictos alrededor del destino de la Fundacion', 17.50, 15, '978-84-679-0033-2', 1998, 'https://covers.openlibrary.org/b/isbn/9780553573329-L.jpg', 4, 3),
+	('Batman: The Killing Joke', 'Una historia clave del Joker y Batman', 21.99, 17, '978-84-679-0034-9', 1988, 'https://covers.openlibrary.org/b/isbn/9781401216672-L.jpg', 5, 2),
+	('National Geographic Ciencia y Espacio', 'Edicion especial sobre astronomia y exploracion', 9.80, 37, '978-84-679-0035-6', 2024, 'https://images.unsplash.com/photo-1446776877081-d282a0f896e2?auto=format&fit=crop&w=1200&q=80', 6, 3);
 
 -- Producto-Autor
 INSERT INTO producto_autor (producto_id, autor_id) VALUES
@@ -85,7 +93,14 @@ INSERT INTO producto_autor (producto_id, autor_id) VALUES
 	(21, 5),
 	(22, 6),
 	(23, 7),
-	(24, 8);
+	(24, 8),
+	(28, 1),
+	(29, 2),
+	(30, 3),
+	(31, 1),
+	(32, 4),
+	(33, 6),
+	(34, 7);
 
 -- Proveedores
 INSERT INTO proveedor (nombre, contacto, telefono, email, direccion) VALUES
