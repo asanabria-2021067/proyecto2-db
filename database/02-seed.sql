@@ -138,3 +138,33 @@ INSERT INTO detalle_venta (venta_id, producto_id, cantidad, precio_unitario) VAL
 	(6, 5, 1, 19.99), (6, 12, 1, 19.99), (6, 3, 1, 13.50),
 	(7, 2, 1, 11.99), (7, 5, 1, 19.99),
 	(8, 7, 1, 16.99);
+
+-- Registros adicionales de usuarios/clientes
+INSERT INTO usuario (username, password_hash, rol) VALUES
+	('cliente3', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('cliente4', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('cliente5', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('cliente6', crypt('cli123', gen_salt('bf', 10)), 'cliente');
+
+INSERT INTO cliente (nombre, email, telefono, direccion, usuario_id) VALUES
+	('Luis Hernandez', 'luis@email.com', '5555-5555', 'Zona 11, Guatemala', (SELECT id_usuario FROM usuario WHERE username = 'cliente3')),
+	('Andrea Ruiz', 'andrea@email.com', '5555-6666', 'Zona 12, Guatemala', (SELECT id_usuario FROM usuario WHERE username = 'cliente4')),
+	('Sofia Martinez', 'sofia@email.com', '5555-7778', 'Zona 13, Guatemala', (SELECT id_usuario FROM usuario WHERE username = 'cliente5')),
+	('Miguel Castro', 'miguel@email.com', '5555-9999', 'Zona 16, Guatemala', (SELECT id_usuario FROM usuario WHERE username = 'cliente6'));
+
+-- Ventas adicionales para poblar reportes e historial
+INSERT INTO venta (cliente_id, empleado_id, fecha, total, estado) VALUES
+	(5, NULL, '2024-09-15 18:00:00', 37.48, 'completada'),
+	(6, 1, '2024-09-20 12:45:00', 25.98, 'completada'),
+	(7, NULL, '2024-10-01 09:30:00', 47.97, 'completada'),
+	(8, 1, '2024-10-08 16:20:00', 32.49, 'completada'),
+	(5, NULL, '2024-10-20 20:10:00', 39.99, 'completada'),
+	(6, 1, '2024-11-03 14:15:00', 54.99, 'completada');
+
+INSERT INTO detalle_venta (venta_id, producto_id, cantidad, precio_unitario) VALUES
+	(9, 16, 1, 12.99), (9, 17, 1, 11.99), (9, 24, 1, 12.50),
+	(10, 1, 1, 12.99), (10, 2, 1, 12.99),
+	(11, 23, 1, 22.50), (11, 18, 1, 13.50), (11, 19, 1, 11.97),
+	(12, 25, 1, 9.50), (12, 26, 1, 9.20), (12, 24, 1, 13.79),
+	(13, 20, 1, 20.99), (13, 12, 1, 19.00),
+	(14, 8, 1, 24.99), (14, 27, 1, 30.00);
