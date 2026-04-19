@@ -53,8 +53,12 @@ ORDER BY v.fecha DESC`;
 
 export const GET_MIS_COMPRAS_DETALLE = `
 SELECT
-	dv.cantidad, dv.precio_unitario,
-	p.titulo AS producto
+	dv.producto_id,
+	dv.cantidad,
+	dv.precio_unitario,
+	p.titulo AS producto,
+	p.imagen_url,
+	p.isbn
 FROM detalle_venta dv
 JOIN producto p ON dv.producto_id = p.id_producto
 WHERE dv.venta_id = $1`;
