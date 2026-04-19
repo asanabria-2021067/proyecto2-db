@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, nextTick } from 'vue'
+import { computed, ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.store'
 import api from '../services/api'
@@ -17,7 +17,9 @@ const error = ref('')
 const loading = ref(false)
 const formRef = ref<HTMLElement>()
 const collageRef = ref<HTMLElement>()
+const scrollAreaRef = ref<HTMLElement>()
 const productos = ref<any[]>([])
+let autoScrollTween: gsap.core.Tween | undefined
 
 const coverImages = computed(() => {
   const fallback = 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=900&q=80'
@@ -81,7 +83,34 @@ onMounted(async () => {
     yoyo: true,
     stagger: { each: 0.3 },
   })
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const scrollEl = scrollAreaRef.value
+  if (!scrollEl || reduceMotion) return
+
+  const maxScroll = scrollEl.scrollHeight - scrollEl.clientHeight
+  if (maxScroll > 40) {
+    autoScrollTween = gsap.to(scrollEl, {
+      scrollTop: maxScroll,
+      duration: Math.max(16, maxScroll / 30),
+      ease: 'sine.inOut',
+      repeat: -1,
+      yoyo: true,
+    })
+  }
 })
+
+onUnmounted(() => {
+  autoScrollTween?.kill()
+})
+
+function pauseAutoScroll() {
+  autoScrollTween?.pause()
+}
+
+function resumeAutoScroll() {
+  autoScrollTween?.resume()
+}
 </script>
 
 <template>
@@ -89,15 +118,20 @@ onMounted(async () => {
     <!-- Left - Cover collage -->
     <div
       ref="collageRef"
-      class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/5 via-background to-accent/10 items-center justify-center p-10 relative overflow-hidden"
+      class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/5 via-background to-accent/10 items-stretch justify-center p-10 relative overflow-hidden"
     >
       <div class="absolute -top-24 -left-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
       <div class="absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-accent/15 blur-3xl" />
 
-      <div class="relative z-10 h-full w-full">
+      <div class="relative z-10 h-full w-full overflow-hidden">
         <!-- Collage grid -->
-        <div class="h-full w-full">
-          <div class="grid h-full w-full grid-cols-6 gap-3 xl:grid-cols-7">
+        <div
+          ref="scrollAreaRef"
+          class="h-full w-full overflow-y-auto pr-2"
+          @mouseenter="pauseAutoScroll"
+          @mouseleave="resumeAutoScroll"
+        >
+          <div class="grid w-full grid-cols-6 gap-3 xl:grid-cols-7">
           <div
             v-for="(src, i) in coverImages"
             :key="i"
