@@ -101,13 +101,13 @@ onMounted(async () => {
       <div class="absolute -top-24 -left-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
       <div class="absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-accent/15 blur-3xl" />
 
-      <div class="relative z-10 text-center max-w-md">
-        <div class="mb-8 max-h-[55vh] overflow-y-auto pr-1">
-          <div class="grid grid-cols-4 gap-3">
+      <div class="relative z-10 h-full w-full text-center">
+        <div class="mb-8 h-full w-full">
+          <div class="grid h-full w-full grid-cols-6 gap-3 xl:grid-cols-7">
           <div
             v-for="(src, i) in coverImages"
             :key="i"
-            class="aspect-[2/3] rounded-lg overflow-hidden shadow-lg"
+            class="aspect-[2/3] rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:scale-[1.03] hover:shadow-xl"
           >
             <img
               :src="src"
@@ -201,7 +201,7 @@ onMounted(async () => {
             class="w-full text-muted-foreground transition-all duration-200 hover:bg-primary/5 hover:text-primary"
             @click="router.push('/')"
           >
-            Volver a la landing
+            Volver a inicio
           </Button>
         </form>
       </div>

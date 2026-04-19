@@ -94,14 +94,14 @@ onMounted(async () => {
       <div class="absolute -top-24 -left-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
       <div class="absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-accent/15 blur-3xl" />
 
-      <div class="relative z-10 w-full max-w-lg">
+      <div class="relative z-10 h-full w-full">
         <!-- Collage grid -->
-        <div class="max-h-[62vh] overflow-y-auto pr-1">
-          <div class="grid grid-cols-4 gap-3">
+        <div class="h-full w-full">
+          <div class="grid h-full w-full grid-cols-6 gap-3 xl:grid-cols-7">
           <div
             v-for="(src, i) in coverImages"
             :key="i"
-            class="cover-float aspect-[2/3] rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105"
+            class="cover-float aspect-[2/3] rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.03]"
           >
             <img
               :src="src"
@@ -113,21 +113,13 @@ onMounted(async () => {
         </div>
         </div>
 
-        <!-- Branding below collage -->
-        <div class="text-center mt-8">
-          <h2 class="text-2xl font-bold text-foreground">Manga Kura</h2>
-          <p class="text-sm text-muted-foreground mt-1">Tu catalogo de libros, mangas, comics y revistas</p>
-        </div>
+      
       </div>
     </div>
 
     <!-- Right - Login Form -->
     <div class="flex-1 flex items-center justify-center p-6 sm:p-12">
       <div ref="formRef" class="w-full max-w-sm">
-        <!-- Mobile logo -->
-        <div class="lg:hidden text-center mb-8">
-          <h2 class="text-xl font-bold text-foreground">Manga Kura</h2>
-        </div>
 
         <h1 class="login-title text-3xl font-bold text-foreground">Bienvenido</h1>
         <p class="login-subtitle text-muted-foreground mt-2 mb-8">Inicia sesion para continuar</p>
@@ -194,7 +186,7 @@ onMounted(async () => {
               class="w-full text-muted-foreground transition-all duration-200 hover:bg-primary/5 hover:text-primary"
               @click="router.push('/')"
             >
-              Volver a la landing
+              Volver a inicio
             </Button>
           </div>
         </form>
