@@ -3,27 +3,29 @@ import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../services/api'
 import { useAuthStore } from '../stores/auth.store'
+import { useCartStore } from '../stores/cart.store'
+import { ShoppingCart } from 'lucide-vue-next'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
-import { useConfirm, useSuccess, useError } from '@/composables/useSwal'
+import { useSuccess, useError } from '@/composables/useSwal'
 import gsap from 'gsap'
 
 const auth = useAuthStore()
+const cart = useCartStore()
 const router = useRouter()
 const productos = ref<any[]>([])
 const search = ref('')
 const tipoFilter = ref('all')
 const loading = ref(true)
-const buying = ref<number | null>(null)
-
 async function load() {
   try {
     const res = await api.get('/productos')
     productos.value = res.data
+    cart.syncStock(res.data)
   } catch {
     // ignore
   } finally {
@@ -48,35 +50,13 @@ const filtered = computed(() => {
 
 const tipos = computed(() => [...new Set(productos.value.map((p: any) => p.tipo))])
 
-async function comprar(producto: any) {
-  if (!auth.isLoggedIn) {
-    useError('Inicia sesion', 'Debes iniciar sesion para comprar')
+async function agregarAlCarrito(producto: any) {
+  if (producto.stock <= 0) {
+    useError('Sin stock', 'Este producto esta agotado')
     return
   }
-  const result = await useConfirm({
-    title: 'Confirmar compra',
-    text: `Comprar "${producto.titulo}" por Q${Number(producto.precio).toFixed(2)}?`,
-    icon: 'question',
-    confirmText: 'Comprar',
-  })
-  if (!result.isConfirmed) return
-
-  buying.value = producto.id_producto
-  try {
-    await api.post('/ventas', {
-      items: [{
-        producto_id: producto.id_producto,
-        cantidad: 1,
-        precio_unitario: Number(producto.precio),
-      }],
-    })
-    await useSuccess('Compra exitosa', `"${producto.titulo}" se agrego a tus compras`)
-    await load()
-  } catch (err: any) {
-    useError('Error', err.response?.data?.error ?? 'No se pudo completar la compra')
-  } finally {
-    buying.value = null
-  }
+  cart.addItem(producto, 1)
+  await useSuccess('Agregado', `"${producto.titulo}" se agrego al carrito`)
 }
 
 onMounted(async () => {
@@ -99,9 +79,15 @@ onMounted(async () => {
         <h1 class="text-2xl font-bold">Catalogo</h1>
         <Badge variant="secondary" class="text-xs">{{ filtered.length }} productos</Badge>
       </div>
-      <Button v-if="!auth.isLoggedIn" variant="outline" size="sm" @click="router.push('/')">
-        Volver al inicio
-      </Button>
+      <div class="flex items-center gap-2">
+        <Button v-if="auth.rol === 'cliente'" variant="outline" size="sm" class="gap-2" @click="router.push('/carrito')">
+          <ShoppingCart class="h-4 w-4" />
+          Carrito ({{ cart.count }})
+        </Button>
+        <Button v-if="!auth.isLoggedIn" variant="outline" size="sm" @click="router.push('/')">
+          Volver al inicio
+        </Button>
+      </div>
     </div>
 
     <div class="flex gap-3 mb-6">
@@ -150,10 +136,9 @@ onMounted(async () => {
                 v-if="auth.isLoggedIn && auth.rol === 'cliente' && p.stock > 0"
                 size="sm"
                 class="h-7 text-xs transition-all duration-200 hover:scale-105"
-                :disabled="buying === p.id_producto"
-                @click.stop="comprar(p)"
+                @click.stop="agregarAlCarrito(p)"
               >
-                {{ buying === p.id_producto ? '...' : 'Comprar' }}
+                Agregar
               </Button>
             </div>
           </div>
