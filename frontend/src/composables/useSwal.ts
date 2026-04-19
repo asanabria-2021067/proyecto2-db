@@ -7,6 +7,15 @@ const swalTheme = {
   cancelButtonColor: 'oklch(0.50 0.01 75)',
 }
 
+const swalClasses = {
+  popup: 'swal-popup',
+  title: 'swal-title',
+  htmlContainer: 'swal-text',
+  icon: 'swal-icon',
+  confirmButton: 'swal-confirm',
+  cancelButton: 'swal-cancel',
+}
+
 export function useConfirm(opts: {
   title: string
   text?: string
@@ -22,11 +31,8 @@ export function useConfirm(opts: {
     confirmButtonText: opts.confirmText ?? 'Si, continuar',
     cancelButtonText: opts.cancelText ?? 'Cancelar',
     reverseButtons: true,
-    customClass: {
-      popup: 'swal-popup',
-      confirmButton: 'swal-confirm',
-      cancelButton: 'swal-cancel',
-    },
+    buttonsStyling: false,
+    customClass: swalClasses,
     ...swalTheme,
   })
 }
@@ -38,7 +44,7 @@ export function useSuccess(title: string, text?: string) {
     icon: 'success',
     timer: 2000,
     showConfirmButton: false,
-    customClass: { popup: 'swal-popup' },
+    customClass: swalClasses,
     ...swalTheme,
   })
 }
@@ -49,10 +55,8 @@ export function useError(title: string, text?: string) {
     text,
     icon: 'error',
     confirmButtonText: 'Entendido',
-    customClass: {
-      popup: 'swal-popup',
-      confirmButton: 'swal-confirm',
-    },
+    buttonsStyling: false,
+    customClass: swalClasses,
     ...swalTheme,
   })
 }
