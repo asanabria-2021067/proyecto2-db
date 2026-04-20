@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import ventaService from '../services/venta.service'
 import VentaForm from '../components/VentaForm.vue'
 import { Button } from '@/components/ui/button'
@@ -11,6 +12,7 @@ import { useSuccess, useError } from '@/composables/useSwal'
 import gsap from 'gsap'
 
 const ventas = ref<any[]>([])
+const router = useRouter()
 const showForm = ref(false)
 const expandedId = ref<number | null>(null)
 const detalles = ref<Record<number, any[]>>({})
@@ -99,7 +101,7 @@ onMounted(async () => {
             <TableHead>Empleado</TableHead>
             <TableHead class="text-right">Total</TableHead>
             <TableHead>Estado</TableHead>
-            <TableHead class="w-24 text-center">Detalle</TableHead>
+            <TableHead class="w-44 text-center">Detalle</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody class="ventas-table">
@@ -116,14 +118,24 @@ onMounted(async () => {
                 </Badge>
               </TableCell>
               <TableCell class="text-center">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  class="h-7 px-2 text-xs transition-all duration-200 hover:bg-primary/10 hover:text-primary"
-                  :disabled="loadingDetalle === v.id_venta"
-                >
-                  {{ loadingDetalle === v.id_venta ? '...' : expandedId === v.id_venta ? 'Ocultar' : 'Ver' }}
-                </Button>
+                <div class="flex items-center justify-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    class="h-7 px-2 text-xs transition-all duration-200 hover:bg-primary/10 hover:text-primary"
+                    :disabled="loadingDetalle === v.id_venta"
+                  >
+                    {{ loadingDetalle === v.id_venta ? '...' : expandedId === v.id_venta ? 'Ocultar' : 'Ver' }}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    class="h-7 px-2 text-xs transition-all duration-200 hover:border-primary/50 hover:text-primary hover:bg-primary/5"
+                    @click.stop="router.push(`/ventas/${v.id_venta}`)"
+                  >
+                    Vista
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
             <!-- Detalle expandido -->
