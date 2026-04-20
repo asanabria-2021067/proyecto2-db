@@ -34,6 +34,31 @@ const router = createRouter({
       component: () => import('../views/VentasView.vue'),
       meta: { requiresAuth: true, roles: ['admin', 'vendedor'] },
     },
+    {
+      path: '/ventas/:id',
+      component: () => import('../views/VentaDetalleView.vue'),
+      meta: { requiresAuth: true, roles: ['admin', 'vendedor'] },
+    },
+    {
+      path: '/compras',
+      component: () => import('../views/ComprasView.vue'),
+      meta: { requiresAuth: true, roles: ['admin', 'vendedor'] },
+    },
+    {
+      path: '/compras/:id',
+      component: () => import('../views/CompraDetalleView.vue'),
+      meta: { requiresAuth: true, roles: ['admin', 'vendedor'] },
+    },
+    {
+      path: '/reportes/productos-no-vendidos',
+      component: () => import('../views/ProductosNoVendidosView.vue'),
+      meta: { requiresAuth: true, roles: ['admin', 'vendedor'] },
+    },
+    {
+      path: '/reportes/clientes-sobre-promedio',
+      component: () => import('../views/ClientesSobrePromedioView.vue'),
+      meta: { requiresAuth: true, roles: ['admin', 'vendedor'] },
+    },
   ],
 })
 
