@@ -41,6 +41,9 @@ const adminLinks = [
   { to: '/productos', label: 'Productos' },
   { to: '/clientes', label: 'Clientes' },
   { to: '/ventas', label: 'Ventas' },
+  { to: '/compras', label: 'Compras' },
+  { to: '/reportes/productos-no-vendidos', label: 'No Vendidos' },
+  { to: '/reportes/clientes-sobre-promedio', label: 'Top Clientes' },
   { to: '/catalogo', label: 'Catalogo' },
 ]
 
