@@ -48,6 +48,11 @@ Estas variables ya estan configuradas en `docker-compose.yaml`.
 | vendedor1 | vend123 | vendedor |
 | cliente1 | cli123 | cliente |
 
+## Documentacion de base de datos
+
+- [Modelo relacional y normalizacion (3FN)](assets/docs/modelo_relacional_normalizacion.md)
+- [Diagrama ER](assets/img/der%20completo%20bases%20de%20datos%20proyecto%202.png)
+
 ## Funcionalidades
 
 - Login/logout con JWT y roles (admin, vendedor, cliente)
