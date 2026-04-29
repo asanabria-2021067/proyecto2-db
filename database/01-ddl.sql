@@ -127,6 +127,12 @@ CREATE TABLE detalle_venta (
 	precio_unitario		DECIMAL(10, 2) NOT NULL CHECK (precio_unitario > 0)
 );
 
+-- INDICES: optimizan consultas frecuentes de filtrado y ordenamiento
+-- Busquedas y ordenamiento por fecha en reportes de ventas
+CREATE INDEX idx_venta_fecha ON venta(fecha);
+-- Filtrado de productos por categoria en catalogo y reportes
+CREATE INDEX idx_producto_categoria ON producto(categoria_id);
+
 -- VIEW: vista_producto_completo (5 pts)
 CREATE VIEW vista_producto_completo AS
 SELECT

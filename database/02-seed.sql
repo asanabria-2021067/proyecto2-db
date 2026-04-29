@@ -15,7 +15,26 @@ INSERT INTO categoria (nombre, tipo, descripcion) VALUES
 	('Fantasia', 'LIBRO', 'Novelas de fantasia y mundos ficticios'),
 	('Ciencia Ficcion', 'LIBRO', 'Novelas de ciencia ficcion'),
 	('Superheroes', 'COMIC', 'Comics de superheroes'),
-	('Divulgacion', 'REVISTA', 'Revistas de divulgacion cientifica');
+	('Divulgacion', 'REVISTA', 'Revistas de divulgacion cientifica'),
+	('Shojo', 'MANGA', 'Manga orientado a jovenes mujeres'),
+	('Terror', 'LIBRO', 'Novelas de terror y suspenso'),
+	('Aventura', 'LIBRO', 'Novelas de aventura y accion'),
+	('Policiaco', 'LIBRO', 'Novelas policiacas y de misterio'),
+	('Humor', 'COMIC', 'Comics de humor y parodia'),
+	('Independiente', 'COMIC', 'Comics independientes y alternativos'),
+	('Tecnologia', 'REVISTA', 'Revistas de tecnologia e informatica'),
+	('Historia', 'LIBRO', 'Libros de historia y biografias'),
+	('Romance', 'MANGA', 'Manga romantico y slice of life'),
+	('Mecha', 'MANGA', 'Manga de robots gigantes'),
+	('Thriller', 'LIBRO', 'Novelas de thriller psicologico'),
+	('Arte', 'REVISTA', 'Revistas de arte y diseno'),
+	('Deportes', 'MANGA', 'Manga de deportes y competencias'),
+	('Western', 'COMIC', 'Comics de genero western'),
+	('Kodomo', 'MANGA', 'Manga para ninos'),
+	('Filosofia', 'LIBRO', 'Libros de filosofia y ensayo'),
+	('Musica', 'REVISTA', 'Revistas de musica y cultura pop'),
+	('Gore', 'MANGA', 'Manga con contenido violento explicito'),
+	('Autobiografia', 'LIBRO', 'Memorias y autobiografias');
 
 -- Editoriales
 INSERT INTO editorial (nombre, pais, sitio_web) VALUES
@@ -23,7 +42,27 @@ INSERT INTO editorial (nombre, pais, sitio_web) VALUES
 	('Panini Comics', 'Italia', 'https://www.paninicomics.com'),
 	('Editorial Planeta', 'Espana', 'https://www.planetadelibros.com'),
 	('Salamandra', 'Espana', 'https://www.salamandra.info'),
-	('Ivrea', 'Argentina', 'https://www.editorialivrea.com');
+	('Ivrea', 'Argentina', 'https://www.editorialivrea.com'),
+	('Penguin Random House', 'Estados Unidos', 'https://www.penguinrandomhouse.com'),
+	('Alfaguara', 'Espana', 'https://www.alfaguara.com'),
+	('Anagrama', 'Espana', 'https://www.anagrama-ed.es'),
+	('Tusquets', 'Espana', 'https://www.tusquetseditores.com'),
+	('Kodansha', 'Japon', 'https://www.kodansha.co.jp'),
+	('Shueisha', 'Japon', 'https://www.shueisha.co.jp'),
+	('Viz Media', 'Estados Unidos', 'https://www.viz.com'),
+	('Dark Horse', 'Estados Unidos', 'https://www.darkhorse.com'),
+	('Marvel Comics', 'Estados Unidos', 'https://www.marvel.com'),
+	('DC Comics', 'Estados Unidos', 'https://www.dc.com'),
+	('Ediciones B', 'Espana', 'https://www.edicionesb.com'),
+	('Minotauro', 'Espana', 'https://www.minotauro.es'),
+	('Tomodomo', 'Espana', 'https://www.tomodomo.net'),
+	('Milky Way', 'Espana', 'https://www.milkywayediciones.com'),
+	('ECC Ediciones', 'Espana', 'https://www.ecccomics.com'),
+	('Verticomics', 'Guatemala', 'https://www.verticomics.gt'),
+	('Booket', 'Espana', 'https://www.planetadelibros.com/booket'),
+	('Debolsillo', 'Espana', 'https://www.megustaleer.com'),
+	('Astiberri', 'Espana', 'https://www.astiberri.com'),
+	('Ponent Mon', 'Espana', 'https://www.ponentmon.com');
 
 -- Autores
 INSERT INTO autor (nombre, nacionalidad, fecha_nacimiento) VALUES
@@ -34,7 +73,24 @@ INSERT INTO autor (nombre, nacionalidad, fecha_nacimiento) VALUES
 	('George Orwell', 'Britanica', '1903-06-25'),
 	('Isaac Asimov', 'Estadounidense', '1920-01-02'),
 	('Frank Miller', 'Estadounidense', '1957-01-27'),
-	('Naoko Takeuchi', 'Japonesa', '1967-03-15');
+	('Naoko Takeuchi', 'Japonesa', '1967-03-15'),
+	('Masashi Kishimoto', 'Japonesa', '1974-11-08'),
+	('Tite Kubo', 'Japonesa', '1977-06-26'),
+	('Rumiko Takahashi', 'Japonesa', '1957-10-10'),
+	('Kentaro Miura', 'Japonesa', '1966-07-11'),
+	('Stephen King', 'Estadounidense', '1947-09-21'),
+	('Gabriel Garcia Marquez', 'Colombiana', '1927-03-06'),
+	('Haruki Murakami', 'Japonesa', '1949-01-12'),
+	('Neil Gaiman', 'Britanica', '1960-11-10'),
+	('Alan Moore', 'Britanica', '1953-11-18'),
+	('Stan Lee', 'Estadounidense', '1922-12-28'),
+	('Osamu Tezuka', 'Japonesa', '1928-11-03'),
+	('CLAMP', 'Japonesa', '1987-05-25'),
+	('Junji Ito', 'Japonesa', '1963-07-31'),
+	('Naoki Urasawa', 'Japonesa', '1960-01-02'),
+	('Hiromu Arakawa', 'Japonesa', '1973-05-08'),
+	('Tsugumi Ohba', 'Japonesa', '1962-01-01'),
+	('Sui Ishida', 'Japonesa', '1986-12-28');
 
 -- Productos
 INSERT INTO producto (titulo, descripcion, precio, stock, isbn, anio_publicacion, imagen_url, categoria_id, editorial_id) VALUES
@@ -106,31 +162,123 @@ INSERT INTO producto_autor (producto_id, autor_id) VALUES
 INSERT INTO proveedor (nombre, contacto, telefono, email, direccion) VALUES
 	('Distribuidora Manga GT', 'Carlos Mendez', '5555-1234', 'carlos@mangagt.com', 'Zona 10, Ciudad de Guatemala'),
 	('Libros del Sur', 'Maria Fernandez', '5555-5678', 'maria@librosdelsur.com', 'Zona 14, Ciudad de Guatemala'),
-	('Comic World Import', 'Roberto Chan', '5555-9012', 'roberto@comicworld.com', 'Zona 4, Ciudad de Guatemala');
+	('Comic World Import', 'Roberto Chan', '5555-9012', 'roberto@comicworld.com', 'Zona 4, Ciudad de Guatemala'),
+	('Editorial Express', 'Luis Ramirez', '5555-3456', 'luis@editorialexpress.com', 'Zona 9, Ciudad de Guatemala'),
+	('Importadora Nippon', 'Kenji Tanaka', '5555-4567', 'kenji@nipponimport.com', 'Zona 13, Ciudad de Guatemala'),
+	('Papeleria Central', 'Sandra Lopez', '5555-5679', 'sandra@papeleriacentral.com', 'Zona 1, Ciudad de Guatemala'),
+	('Distribuidora Oceano', 'Fernando Diaz', '5555-6789', 'fernando@oceano.com', 'Zona 7, Ciudad de Guatemala'),
+	('Comics & Mangas SA', 'Patricia Morales', '5555-7890', 'patricia@comicsmangas.com', 'Zona 11, Ciudad de Guatemala'),
+	('Libreria Nacional', 'Jorge Castillo', '5555-8901', 'jorge@librerianacional.com', 'Zona 1, Ciudad de Guatemala'),
+	('Importadora Asia Books', 'Yuki Sato', '5555-9013', 'yuki@asiabooks.com', 'Zona 10, Ciudad de Guatemala'),
+	('Distribuidora Panamericana', 'Rosa Martinez', '5555-0123', 'rosa@panamericana.com', 'Zona 12, Ciudad de Guatemala'),
+	('Editorial Centroamericana', 'Mario Gonzalez', '5555-1235', 'mario@editorialca.com', 'Zona 5, Ciudad de Guatemala'),
+	('Manga Store GT', 'Diego Herrera', '5555-2345', 'diego@mangastore.gt', 'Zona 15, Ciudad de Guatemala'),
+	('Libros y Comics Express', 'Carolina Paz', '5555-3457', 'carolina@lcexpress.com', 'Zona 16, Ciudad de Guatemala'),
+	('Distribuidora Escolar', 'Enrique Fuentes', '5555-4568', 'enrique@distescolar.com', 'Zona 2, Ciudad de Guatemala'),
+	('Importadora Tokyopop', 'Akira Yamamoto', '5555-5680', 'akira@tokyopop.gt', 'Zona 10, Ciudad de Guatemala'),
+	('Papeleria Moderna', 'Lucia Reyes', '5555-6790', 'lucia@papeleriamoderna.com', 'Zona 8, Ciudad de Guatemala'),
+	('Comics Central America', 'Oscar Mejia', '5555-7891', 'oscar@comicsca.com', 'Zona 11, Ciudad de Guatemala'),
+	('Editorial Universitaria', 'Marta Sandoval', '5555-8902', 'marta@edituniversitaria.edu.gt', 'Zona 12, Ciudad de Guatemala'),
+	('Libreria El Pensativo', 'Raul Cifuentes', '5555-9014', 'raul@elpensativo.com', 'Zona 1, Antigua Guatemala'),
+	('Japan Direct Import', 'Hiro Nakamura', '5555-0124', 'hiro@japandirect.com', 'Zona 14, Ciudad de Guatemala'),
+	('Distribuidora Cultural', 'Ana Belen Torres', '5555-1236', 'anabelen@distcultural.com', 'Zona 3, Ciudad de Guatemala'),
+	('Mega Comics GT', 'Victor Hugo Pena', '5555-2346', 'victor@megacomics.gt', 'Zona 6, Ciudad de Guatemala'),
+	('Libreria Sophos', 'Carmen Arriaga', '5555-3458', 'carmen@sophos.com.gt', 'Zona 10, Ciudad de Guatemala'),
+	('Editorial Piedra Santa', 'Roberto Lemus', '5555-4569', 'roberto@piedrasanta.com', 'Zona 9, Ciudad de Guatemala');
 
 -- Clientes
 INSERT INTO cliente (nombre, email, telefono, direccion, usuario_id) VALUES
 	('Juan Perez', 'juan@email.com', '5555-1111', 'Zona 1, Guatemala', 3),
 	('Maria Garcia', 'maria@email.com', '5555-2222', 'Zona 5, Guatemala', 4),
 	('Carlos Lopez', 'carlos@email.com', '5555-3333', 'Zona 10, Guatemala', NULL),
-	('Ana Rodriguez', 'ana@email.com', '5555-4444', 'Zona 15, Guatemala', NULL);
+	('Ana Rodriguez', 'ana@email.com', '5555-4444', 'Zona 15, Guatemala', NULL),
+	('Pedro Ramirez', 'pedro.r@email.com', '5555-1112', 'Zona 7, Guatemala', NULL),
+	('Lucia Morales', 'lucia.m@email.com', '5555-1113', 'Zona 12, Guatemala', NULL),
+	('Fernando Castillo', 'fernando.c@email.com', '5555-1114', 'Zona 9, Guatemala', NULL),
+	('Isabel Mendez', 'isabel.m@email.com', '5555-1115', 'Zona 14, Guatemala', NULL),
+	('Ricardo Fuentes', 'ricardo.f@email.com', '5555-1116', 'Zona 3, Guatemala', NULL),
+	('Gabriela Torres', 'gabriela.t@email.com', '5555-1117', 'Zona 11, Guatemala', NULL),
+	('Diego Herrera', 'diego.h@email.com', '5555-1118', 'Zona 8, Guatemala', NULL),
+	('Valeria Paz', 'valeria.p@email.com', '5555-1119', 'Zona 16, Guatemala', NULL),
+	('Oscar Mejia', 'oscar.m@email.com', '5555-1120', 'Zona 6, Guatemala', NULL),
+	('Daniela Reyes', 'daniela.r@email.com', '5555-1121', 'Zona 2, Guatemala', NULL),
+	('Alejandro Ruiz', 'alejandro.r@email.com', '5555-1122', 'Zona 4, Guatemala', NULL),
+	('Monica Sandoval', 'monica.s@email.com', '5555-1123', 'Zona 13, Guatemala', NULL),
+	('Sergio Gonzalez', 'sergio.g@email.com', '5555-1124', 'Zona 5, Guatemala', NULL),
+	('Paola Cifuentes', 'paola.c@email.com', '5555-1125', 'Zona 10, Guatemala', NULL),
+	('Raul Enrique Soto', 'raul.s@email.com', '5555-1126', 'Zona 7, Guatemala', NULL),
+	('Claudia Ramos', 'claudia.r@email.com', '5555-1127', 'Zona 14, Guatemala', NULL),
+	('Ernesto Aguilar', 'ernesto.a@email.com', '5555-1128', 'Zona 9, Guatemala', NULL);
 
 -- Empleados
 INSERT INTO empleado (nombre, cargo, telefono, email, usuario_id) VALUES
 	('Pedro Martinez', 'Vendedor', '5555-7777', 'pedro@tienda.com', 2),
-	('Laura Gomez', 'Cajera', '5555-8888', 'laura@tienda.com', NULL);
+	('Laura Gomez', 'Cajera', '5555-8888', 'laura@tienda.com', NULL),
+	('Miguel Angel Soto', 'Vendedor', '5555-8001', 'miguel.s@tienda.com', NULL),
+	('Carmen Lucia Reyes', 'Cajera', '5555-8002', 'carmen.r@tienda.com', NULL),
+	('Jorge Luis Hernandez', 'Bodeguero', '5555-8003', 'jorge.h@tienda.com', NULL),
+	('Fabiola Martinez', 'Vendedora', '5555-8004', 'fabiola.m@tienda.com', NULL),
+	('Andres Felipe Diaz', 'Vendedor', '5555-8005', 'andres.d@tienda.com', NULL),
+	('Rosa Maria Lopez', 'Cajera', '5555-8006', 'rosa.l@tienda.com', NULL),
+	('Hector Raul Perez', 'Bodeguero', '5555-8007', 'hector.p@tienda.com', NULL),
+	('Silvia Eugenia Paz', 'Vendedora', '5555-8008', 'silvia.p@tienda.com', NULL),
+	('Juan Carlos Morales', 'Supervisor', '5555-8009', 'juanc.m@tienda.com', NULL),
+	('Elena Patricia Torres', 'Cajera', '5555-8010', 'elena.t@tienda.com', NULL),
+	('Roberto Alejandro Cruz', 'Vendedor', '5555-8011', 'roberto.c@tienda.com', NULL),
+	('Mariana Isabel Fuentes', 'Vendedora', '5555-8012', 'mariana.f@tienda.com', NULL),
+	('Daniel Eduardo Ruiz', 'Bodeguero', '5555-8013', 'daniel.r@tienda.com', NULL),
+	('Patricia Carolina Mejia', 'Cajera', '5555-8014', 'patricia.m@tienda.com', NULL),
+	('Luis Fernando Castillo', 'Vendedor', '5555-8015', 'luisf.c@tienda.com', NULL),
+	('Claudia Alejandra Ramos', 'Vendedora', '5555-8016', 'claudia.r@tienda.com', NULL),
+	('Sergio Ivan Gonzalez', 'Bodeguero', '5555-8017', 'sergio.g@tienda.com', NULL),
+	('Natalia Fernanda Solis', 'Cajera', '5555-8018', 'natalia.s@tienda.com', NULL),
+	('Victor Manuel Aguilar', 'Vendedor', '5555-8019', 'victor.a@tienda.com', NULL),
+	('Adriana Paola Sandoval', 'Vendedora', '5555-8020', 'adriana.s@tienda.com', NULL),
+	('Francisco Javier Lemus', 'Supervisor', '5555-8021', 'francisco.l@tienda.com', NULL),
+	('Gloria Esperanza Cifuentes', 'Cajera', '5555-8022', 'gloria.c@tienda.com', NULL),
+	('Emilio Jose Arriaga', 'Bodeguero', '5555-8023', 'emilio.a@tienda.com', NULL);
 
 -- Compras a proveedores
 INSERT INTO compra_proveedor (proveedor_id, fecha, total, estado) VALUES
 	(1, '2024-01-15 10:00:00', 650.00, 'completada'),
 	(2, '2024-02-20 14:30:00', 890.00, 'completada'),
-	(3, '2024-03-10 09:00:00', 450.00, 'completada');
+	(3, '2024-03-10 09:00:00', 450.00, 'completada'),
+	(4, '2024-03-25 11:00:00', 520.00, 'completada'),
+	(5, '2024-04-02 09:30:00', 780.00, 'completada'),
+	(6, '2024-04-18 14:00:00', 340.00, 'completada'),
+	(7, '2024-05-05 10:15:00', 920.00, 'completada'),
+	(8, '2024-05-20 16:00:00', 415.00, 'completada'),
+	(1, '2024-06-01 08:30:00', 1100.00, 'completada'),
+	(2, '2024-06-15 13:00:00', 670.00, 'completada'),
+	(3, '2024-07-01 10:00:00', 590.00, 'completada'),
+	(9, '2024-07-12 11:30:00', 830.00, 'completada'),
+	(10, '2024-07-28 09:00:00', 460.00, 'completada'),
+	(11, '2024-08-05 14:45:00', 720.00, 'completada'),
+	(12, '2024-08-18 10:00:00', 550.00, 'completada'),
+	(4, '2024-08-30 15:30:00', 380.00, 'completada'),
+	(5, '2024-09-10 09:00:00', 640.00, 'completada'),
+	(13, '2024-09-22 11:00:00', 910.00, 'completada'),
+	(6, '2024-10-03 13:15:00', 475.00, 'completada'),
+	(7, '2024-10-15 10:30:00', 560.00, 'completada'),
+	(14, '2024-10-28 08:00:00', 730.00, 'completada'),
+	(15, '2024-11-05 14:00:00', 850.00, 'completada'),
+	(8, '2024-11-18 09:45:00', 620.00, 'completada'),
+	(1, '2024-11-30 11:00:00', 990.00, 'completada'),
+	(2, '2024-12-10 15:00:00', 710.00, 'completada');
 
 -- Detalle compras
 INSERT INTO detalle_compra (compra_id, producto_id, cantidad, precio_unitario) VALUES
 	(1, 1, 20, 8.00), (1, 2, 25, 7.50), (1, 3, 15, 9.00),
 	(2, 5, 30, 12.00), (2, 6, 25, 10.00), (2, 7, 15, 11.00),
-	(3, 8, 10, 18.00), (3, 9, 20, 7.50), (3, 4, 10, 10.00);
+	(3, 8, 10, 18.00), (3, 9, 20, 7.50), (3, 4, 10, 10.00),
+	(4, 10, 15, 8.50), (4, 11, 20, 7.80),
+	(5, 12, 25, 13.00), (5, 13, 30, 5.50),
+	(6, 14, 10, 9.00), (6, 15, 12, 11.50),
+	(7, 16, 18, 8.50), (7, 17, 22, 7.80), (7, 18, 14, 9.20),
+	(8, 19, 8, 10.00), (8, 20, 20, 13.50),
+	(9, 21, 25, 9.00), (9, 22, 15, 11.80),
+	(10, 23, 12, 15.00), (10, 24, 18, 8.20),
+	(11, 25, 35, 6.00);
 
 -- Ventas
 INSERT INTO venta (cliente_id, empleado_id, fecha, total, estado) VALUES
@@ -159,7 +307,20 @@ INSERT INTO usuario (username, password_hash, rol) VALUES
 	('cliente3', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
 	('cliente4', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
 	('cliente5', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
-	('cliente6', crypt('cli123', gen_salt('bf', 10)), 'cliente');
+	('cliente6', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('cliente7', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('cliente8', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('cliente9', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('cliente10', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('cliente11', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('cliente12', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('vendedor2', crypt('vend123', gen_salt('bf', 10)), 'vendedor'),
+	('vendedor3', crypt('vend123', gen_salt('bf', 10)), 'vendedor'),
+	('vendedor4', crypt('vend123', gen_salt('bf', 10)), 'vendedor'),
+	('admin2', crypt('admin123', gen_salt('bf', 10)), 'admin'),
+	('cliente13', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('cliente14', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('cliente15', crypt('cli123', gen_salt('bf', 10)), 'cliente');
 
 INSERT INTO cliente (nombre, email, telefono, direccion, usuario_id) VALUES
 	('Luis Hernandez', 'luis@email.com', '5555-5555', 'Zona 11, Guatemala', (SELECT id_usuario FROM usuario WHERE username = 'cliente3')),
@@ -174,7 +335,18 @@ INSERT INTO venta (cliente_id, empleado_id, fecha, total, estado) VALUES
 	(7, NULL, '2024-10-01 09:30:00', 47.97, 'completada'),
 	(8, 1, '2024-10-08 16:20:00', 32.49, 'completada'),
 	(5, NULL, '2024-10-20 20:10:00', 39.99, 'completada'),
-	(6, 1, '2024-11-03 14:15:00', 54.99, 'completada');
+	(6, 1, '2024-11-03 14:15:00', 54.99, 'completada'),
+	(1, 2, '2024-11-10 10:00:00', 26.98, 'completada'),
+	(2, NULL, '2024-11-15 17:30:00', 41.97, 'completada'),
+	(3, 1, '2024-11-22 12:00:00', 33.49, 'completada'),
+	(4, NULL, '2024-12-01 19:45:00', 58.97, 'completada'),
+	(7, 2, '2024-12-05 11:15:00', 27.98, 'completada'),
+	(8, 1, '2024-12-10 14:30:00', 45.48, 'completada'),
+	(1, NULL, '2024-12-15 16:00:00', 36.98, 'completada'),
+	(3, 2, '2024-12-18 09:30:00', 52.47, 'completada'),
+	(5, 1, '2024-12-22 13:00:00', 29.98, 'completada'),
+	(4, NULL, '2024-12-28 18:20:00', 43.98, 'completada'),
+	(2, 1, '2025-01-05 10:30:00', 31.48, 'completada');
 
 INSERT INTO detalle_venta (venta_id, producto_id, cantidad, precio_unitario) VALUES
 	(9, 16, 1, 12.99), (9, 17, 1, 11.99), (9, 24, 1, 12.50),
@@ -182,4 +354,15 @@ INSERT INTO detalle_venta (venta_id, producto_id, cantidad, precio_unitario) VAL
 	(11, 23, 1, 22.50), (11, 18, 1, 13.50), (11, 19, 1, 11.97),
 	(12, 25, 1, 9.50), (12, 26, 1, 9.20), (12, 24, 1, 13.79),
 	(13, 20, 1, 20.99), (13, 12, 1, 19.00),
-	(14, 8, 1, 24.99), (14, 27, 1, 30.00);
+	(14, 8, 1, 24.99), (14, 27, 1, 30.00),
+	(15, 10, 1, 12.99), (15, 14, 1, 13.99),
+	(16, 5, 1, 19.99), (16, 9, 1, 12.50), (16, 13, 1, 8.99),
+	(17, 21, 1, 13.99), (17, 6, 1, 19.50),
+	(18, 7, 1, 16.99), (18, 20, 1, 20.99), (18, 12, 1, 19.99),
+	(19, 3, 1, 13.50), (19, 14, 1, 14.48),
+	(20, 22, 1, 17.50), (20, 15, 1, 16.99), (20, 4, 1, 14.99),
+	(21, 1, 2, 12.99), (21, 11, 1, 11.99),
+	(22, 32, 1, 20.99), (22, 6, 1, 15.99), (22, 33, 1, 17.50),
+	(23, 28, 1, 12.99), (23, 17, 1, 11.99),
+	(24, 34, 1, 21.99), (24, 29, 1, 11.99), (24, 30, 1, 13.50),
+	(25, 2, 1, 11.99), (25, 16, 1, 12.99);
