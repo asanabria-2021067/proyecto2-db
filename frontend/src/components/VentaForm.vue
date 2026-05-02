@@ -22,17 +22,21 @@ const emit = defineEmits<{
 const open = ref(true)
 const clientes = ref<any[]>([])
 const productos = ref<any[]>([])
+const empleados = ref<any[]>([])
 const clienteId = ref('')
+const empleadoId = ref('web')
 const items = ref<{ producto_id: string; cantidad: number; precio_unitario: number }[]>([])
 const error = ref('')
 
 onMounted(async () => {
-  const [cRes, pRes] = await Promise.all([
+  const [cRes, pRes, eRes] = await Promise.all([
     api.get('/clientes'),
     api.get('/productos'),
+    api.get('/empleados'),
   ])
   clientes.value = cRes.data
   productos.value = pRes.data
+  empleados.value = eRes.data
 })
 
 function addItem() {
@@ -62,6 +66,10 @@ function submit() {
     error.value = 'Seleccione un cliente'
     return
   }
+  if (!empleadoId.value) {
+    error.value = 'Seleccione tipo de venta'
+    return
+  }
   if (items.value.length === 0) {
     error.value = 'Agregue al menos un producto'
     return
@@ -74,7 +82,7 @@ function submit() {
   }
   emit('save', {
     cliente_id: Number(clienteId.value),
-    empleado_id: null,
+    empleado_id: empleadoId.value === 'web' ? null : Number(empleadoId.value),
     items: items.value.map(it => ({
       producto_id: Number(it.producto_id),
       cantidad: it.cantidad,
@@ -101,18 +109,35 @@ function handleOpenChange(val: boolean) {
       </div>
 
       <form @submit.prevent="submit" class="space-y-4">
-        <div class="space-y-2">
-          <Label>Cliente *</Label>
-          <Select v-model="clienteId">
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccionar cliente..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem v-for="c in clientes" :key="c.id_cliente" :value="String(c.id_cliente)">
-                {{ c.nombre }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <Label>Cliente *</Label>
+            <Select v-model="clienteId">
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar cliente..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="c in clientes" :key="c.id_cliente" :value="String(c.id_cliente)">
+                  {{ c.nombre }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div class="space-y-2">
+            <Label>Tipo de venta *</Label>
+            <Select v-model="empleadoId">
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="web">Venta Web</SelectItem>
+                <SelectItem v-for="e in empleados" :key="e.id_empleado" :value="String(e.id_empleado)">
+                  {{ e.nombre }} ({{ e.cargo }})
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div class="flex items-center justify-between">
