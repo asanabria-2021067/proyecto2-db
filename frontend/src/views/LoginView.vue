@@ -6,6 +6,7 @@ import api from '../services/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useSuccess, useError } from '@/composables/useSwal'
 import gsap from 'gsap'
 
 const auth = useAuthStore()
@@ -48,6 +49,7 @@ async function handleLogin() {
   loading.value = true
   try {
     await auth.login(username.value, password.value)
+    await useSuccess('Bienvenido', `Sesion iniciada como ${auth.user?.username}`)
     if (auth.rol === 'cliente') {
       router.push('/catalogo')
     } else {
@@ -55,6 +57,7 @@ async function handleLogin() {
     }
   } catch {
     error.value = 'Credenciales invalidas'
+    await useError('Error de autenticacion', 'Usuario o password incorrectos')
     gsap.fromTo('.login-error', { x: -8 }, { x: 0, duration: 0.4, ease: 'elastic.out(1, 0.3)' })
   } finally {
     loading.value = false

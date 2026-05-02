@@ -6,6 +6,7 @@ import api from '../services/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useSuccess, useError } from '@/composables/useSwal'
 import gsap from 'gsap'
 
 const router = useRouter()
@@ -47,14 +48,17 @@ async function handleRegister() {
   error.value = ''
   if (!form.value.username || !form.value.password || !form.value.nombre) {
     error.value = 'Username, password y nombre son requeridos'
+    await useError('Campos requeridos', 'Completa todos los campos obligatorios')
     return
   }
   if (form.value.password !== form.value.confirmPassword) {
     error.value = 'Las passwords no coinciden'
+    await useError('Error de validacion', 'Las passwords no coinciden')
     return
   }
   if (form.value.password.length < 4) {
     error.value = 'La password debe tener al menos 4 caracteres'
+    await useError('Password muy corta', 'La password debe tener al menos 4 caracteres')
     return
   }
   loading.value = true
@@ -70,9 +74,11 @@ async function handleRegister() {
     auth.token = res.data.token
     auth.user = res.data.user
     localStorage.setItem('token', res.data.token)
+    await useSuccess('Cuenta creada', `Bienvenido ${form.value.nombre}!`)
     router.push('/catalogo')
   } catch (err: any) {
     error.value = err.response?.data?.error ?? 'Error al registrar'
+    await useError('Error al registrar', err.response?.data?.error ?? 'Ocurrio un error inesperado')
   } finally {
     loading.value = false
   }
