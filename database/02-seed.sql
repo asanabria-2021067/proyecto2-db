@@ -320,7 +320,11 @@ INSERT INTO usuario (username, password_hash, rol) VALUES
 	('admin2', crypt('admin123', gen_salt('bf', 10)), 'admin'),
 	('cliente13', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
 	('cliente14', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
-	('cliente15', crypt('cli123', gen_salt('bf', 10)), 'cliente');
+	('cliente15', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('cliente16', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('cliente17', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('cliente18', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
+	('cliente19', crypt('cli123', gen_salt('bf', 10)), 'cliente');
 
 INSERT INTO cliente (nombre, email, telefono, direccion, usuario_id) VALUES
 	('Luis Hernandez', 'luis@email.com', '5555-5555', 'Zona 11, Guatemala', (SELECT id_usuario FROM usuario WHERE username = 'cliente3')),
