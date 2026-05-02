@@ -32,7 +32,7 @@ Abrir http://localhost:5173 en el navegador.
 ## Variables de entorno
 
 ```
-POSTGRES_USER=proxy2
+POSTGRES_USER=proy2
 POSTGRES_PASSWORD=secret
 POSTGRES_DB=tienda_libros
 JWT_SECRET=mi_secreto_jwt_super_seguro_2024

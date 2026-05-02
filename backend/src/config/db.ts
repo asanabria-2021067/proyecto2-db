@@ -3,9 +3,9 @@ import pg from 'pg';
 const pool = new pg.Pool({
 	host: process.env['DB_HOST'] ?? 'localhost',
 	port: Number(process.env['DB_PORT'] ?? 5432),
-	user: process.env['POSTGRES_USER'] ?? 'proxy2',
-	password: process.env['POSTGRES_PASSWORD'] ?? 'secret',
-	database: process.env['POSTGRES_DB'] ?? 'tienda_libros',
+	user: process.env['DB_USER'] ?? 'proy2',
+	password: process.env['DB_PASSWORD'] ?? 'secret',
+	database: process.env['DB_NAME'] ?? 'tienda_libros',
 });
 
 export default pool;
