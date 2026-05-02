@@ -191,9 +191,8 @@ onMounted(async () => {
       No se encontraron productos.
     </p>
 
-    <!-- Product Details Dialog -->
     <Dialog v-model:open="showDialog">
-      <DialogContent class="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent class="max-w-3xl max-h-[100vh] overflow-y-auto">
         <DialogHeader v-if="selectedProduct">
           <DialogTitle class="text-xl font-bold">{{ selectedProduct.titulo }}</DialogTitle>
           <DialogDescription v-if="selectedProduct.autores" class="text-sm">
