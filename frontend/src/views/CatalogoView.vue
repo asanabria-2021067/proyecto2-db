@@ -11,6 +11,14 @@ import { Button } from '@/components/ui/button'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { useSuccess, useError } from '@/composables/useSwal'
 import gsap from 'gsap'
 
@@ -21,6 +29,8 @@ const productos = ref<any[]>([])
 const search = ref('')
 const tipoFilter = ref('all')
 const loading = ref(true)
+const selectedProduct = ref<any>(null)
+const showDialog = ref(false)
 async function load() {
   try {
     const res = await api.get('/productos')
@@ -49,6 +59,11 @@ const filtered = computed(() => {
 })
 
 const tipos = computed(() => [...new Set(productos.value.map((p: any) => p.tipo))])
+
+function openProductDialog(producto: any) {
+  selectedProduct.value = producto
+  showDialog.value = true
+}
 
 async function agregarAlCarrito(producto: any) {
   if (producto.stock <= 0) {
@@ -112,7 +127,7 @@ onMounted(async () => {
         class="catalog-item group"
       >
         <!-- Cover image -->
-        <div class="relative aspect-[2/3] rounded-xl overflow-hidden shadow-md transition-all duration-300 group-hover:shadow-xl group-hover:shadow-primary/15 group-hover:-translate-y-2">
+        <div class="relative aspect-[2/3] rounded-xl overflow-hidden shadow-md transition-all duration-300 group-hover:shadow-xl group-hover:shadow-primary/15 group-hover:-translate-y-2 cursor-pointer" @click="openProductDialog(p)">
           <img
             v-if="p.imagen_url"
             :src="p.imagen_url"
@@ -175,5 +190,94 @@ onMounted(async () => {
     <p v-if="!loading && filtered.length === 0" class="text-center py-16 text-muted-foreground">
       No se encontraron productos.
     </p>
+
+    <!-- Product Details Dialog -->
+    <Dialog v-model:open="showDialog">
+      <DialogContent class="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader v-if="selectedProduct">
+          <DialogTitle class="text-xl font-bold">{{ selectedProduct.titulo }}</DialogTitle>
+          <DialogDescription v-if="selectedProduct.autores" class="text-sm">
+            por {{ selectedProduct.autores }}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div v-if="selectedProduct" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          <!-- Image -->
+          <div class="aspect-[2/3] rounded-lg overflow-hidden shadow-lg">
+            <img
+              v-if="selectedProduct.imagen_url"
+              :src="selectedProduct.imagen_url"
+              :alt="selectedProduct.titulo"
+              class="h-full w-full object-cover"
+            />
+            <div
+              v-else
+              class="h-full w-full bg-gradient-to-br from-primary/20 via-accent/10 to-muted flex items-center justify-center"
+            >
+              <span class="text-sm text-muted-foreground font-medium px-4 text-center">{{ selectedProduct.titulo }}</span>
+            </div>
+          </div>
+
+          <!-- Details -->
+          <div class="flex flex-col gap-4">
+            <div>
+              <h3 class="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">Detalles</h3>
+              <div class="space-y-2">
+                <div class="flex justify-between">
+                  <span class="text-sm text-muted-foreground">Tipo:</span>
+                  <Badge variant="secondary">{{ selectedProduct.tipo }}</Badge>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-muted-foreground">Editorial:</span>
+                  <span class="text-sm font-medium">{{ selectedProduct.editorial }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-muted-foreground">Categoria:</span>
+                  <span class="text-sm font-medium">{{ selectedProduct.categoria }}</span>
+                </div>
+                <div v-if="selectedProduct.anio_publicacion" class="flex justify-between">
+                  <span class="text-sm text-muted-foreground">Año:</span>
+                  <span class="text-sm font-medium">{{ selectedProduct.anio_publicacion }}</span>
+                </div>
+                <div v-if="selectedProduct.isbn" class="flex justify-between">
+                  <span class="text-sm text-muted-foreground">ISBN:</span>
+                  <span class="text-sm font-mono text-xs">{{ selectedProduct.isbn }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="selectedProduct.descripcion">
+              <h3 class="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">Descripcion</h3>
+              <p class="text-sm leading-relaxed">{{ selectedProduct.descripcion }}</p>
+            </div>
+
+            <div class="mt-auto pt-4 border-t">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <p class="text-xs text-muted-foreground">Precio</p>
+                  <p class="text-2xl font-bold text-primary">Q{{ Number(selectedProduct.precio).toFixed(2) }}</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-xs text-muted-foreground">Stock disponible</p>
+                  <Badge :variant="selectedProduct.stock <= 5 ? 'destructive' : 'secondary'" class="text-sm">
+                    {{ selectedProduct.stock > 0 ? `${selectedProduct.stock} unidades` : 'Agotado' }}
+                  </Badge>
+                </div>
+              </div>
+
+              <Button
+                v-if="auth.isLoggedIn && auth.rol === 'cliente'"
+                class="w-full transition-all duration-200 hover:scale-105"
+                :disabled="selectedProduct.stock <= 0"
+                @click="agregarAlCarrito(selectedProduct); showDialog = false"
+              >
+                <ShoppingCart class="h-4 w-4 mr-2" />
+                {{ selectedProduct.stock > 0 ? 'Agregar al carrito' : 'Sin stock' }}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
