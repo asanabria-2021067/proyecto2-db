@@ -8,6 +8,9 @@ import { Badge } from '@/components/ui/badge'
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table'
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select'
 import { useSuccess, useError } from '@/composables/useSwal'
 import gsap from 'gsap'
 
@@ -19,11 +22,29 @@ const detalles = ref<Record<number, any[]>>({})
 const loadingDetalle = ref<number | null>(null)
 const page = ref(1)
 const perPage = 10
+const empleadoFilter = ref('all')
 
-const totalPages = computed(() => Math.max(1, Math.ceil(ventas.value.length / perPage)))
+const empleados = computed(() => {
+  const unique = new Set<string>()
+  ventas.value.forEach((v) => {
+    const emp = v.empleado ?? 'Web'
+    unique.add(emp)
+  })
+  return Array.from(unique).sort()
+})
+
+const filteredVentas = computed(() => {
+  if (empleadoFilter.value === 'all') return ventas.value
+  if (empleadoFilter.value === 'Web') {
+    return ventas.value.filter((v) => !v.empleado)
+  }
+  return ventas.value.filter((v) => v.empleado === empleadoFilter.value)
+})
+
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredVentas.value.length / perPage)))
 const paginatedVentas = computed(() => {
   const start = (page.value - 1) * perPage
-  return ventas.value.slice(start, start + perPage)
+  return filteredVentas.value.slice(start, start + perPage)
 })
 
 async function load() {
@@ -84,11 +105,23 @@ onMounted(async () => {
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
         <h1 class="text-2xl font-bold">Ventas</h1>
-        <Badge variant="secondary" class="text-xs">{{ ventas.length }} registradas</Badge>
+        <Badge variant="secondary" class="text-xs">{{ filteredVentas.length }} de {{ ventas.length }}</Badge>
       </div>
       <Button class="gap-1.5 transition-all duration-200 hover:scale-105 hover:shadow-md hover:shadow-primary/20" @click="showForm = true">
         + Nueva Venta
       </Button>
+    </div>
+
+    <div class="mb-4">
+      <Select v-model="empleadoFilter">
+        <SelectTrigger class="w-64">
+          <SelectValue placeholder="Filtrar por vendedor" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Todas las ventas</SelectItem>
+          <SelectItem v-for="emp in empleados" :key="emp" :value="emp">{{ emp }}</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
 
     <div class="rounded-lg border bg-card shadow-sm">
