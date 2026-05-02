@@ -132,6 +132,12 @@ CREATE TABLE detalle_venta (
 CREATE INDEX idx_venta_fecha ON venta(fecha);
 -- Filtrado de productos por categoria en catalogo y reportes
 CREATE INDEX idx_producto_categoria ON producto(categoria_id);
+-- Consultas de productos por editorial
+CREATE INDEX idx_producto_editorial ON producto(editorial_id);
+-- Consultas de ventas por cliente
+CREATE INDEX idx_venta_cliente ON venta(cliente_id);
+-- Consultas de compras por proveedor
+CREATE INDEX idx_compra_proveedor ON compra_proveedor(proveedor_id);
 
 -- VIEW: vista_producto_completo (5 pts)
 CREATE VIEW vista_producto_completo AS
