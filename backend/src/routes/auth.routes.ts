@@ -6,7 +6,7 @@ import pool from '../config/db.js';
 import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
-const JWT_SECRET = process.env['JWT_SECRET'] ?? 'mi_secreto_jwt_super_seguro_2024';
+const JWT_SECRET = process.env['JWT_SECRET'] ?? 'a58357173f277af9328127d173d9efe57d8c91f0efdcab66b7a4158af776ac61ca985e7b696ed7ab5c9e8b536a3efbd1f0dae3f05078fe8e14c22192ee12d68d';
 
 router.post('/login', async (req: Request, res: Response) => {
 	try {

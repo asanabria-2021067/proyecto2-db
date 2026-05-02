@@ -35,10 +35,16 @@ Abrir http://localhost:5173 en el navegador.
 POSTGRES_USER=proy2
 POSTGRES_PASSWORD=secret
 POSTGRES_DB=tienda_libros
-JWT_SECRET=mi_secreto_jwt_super_seguro_2024
+JWT_SECRET=a58357173f277af9328127d173d9efe57d8c91f0efdcab66b7a4158af776ac61ca985e7b696ed7ab5c9e8b536a3efbd1f0dae3f05078fe8e14c22192ee12d68d
 ```
 
 Estas variables ya estan configuradas en `docker-compose.yaml`.
+
+**Nota sobre JWT_SECRET:** El secreto fue generado usando https://jwtsecrets.com/#generator. Se usa un string hexadecimal de 512 bits (128 caracteres) con entropia criptografica en lugar de un nombre o frase porque:
+- Nombres/frases predecibles son vulnerables a ataques de diccionario
+- Secretos con baja entropia permiten fuerza bruta para falsificar tokens
+- JWT_SECRET protege la integridad de TODOS los tokens - si se compromete, un atacante puede crear tokens validos con cualquier payload (ej. rol admin)
+- 512 bits de entropia criptografica hacen computacionalmente imposible adivinar el secreto
 
 ## Usuarios de prueba
 

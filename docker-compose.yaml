@@ -47,7 +47,7 @@ services:
       - DB_USER=proy2
       - DB_PASSWORD=secret
       - DB_NAME=tienda_libros
-      - JWT_SECRET=mi_secreto_jwt_super_seguro_2024
+      - JWT_SECRET=a58357173f277af9328127d173d9efe57d8c91f0efdcab66b7a4158af776ac61ca985e7b696ed7ab5c9e8b536a3efbd1f0dae3f05078fe8e14c22192ee12d68d
       - PORT=3000
     depends_on:
       db-init:
