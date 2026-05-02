@@ -2,32 +2,104 @@
 
 Aplicacion web fullstack para gestionar inventario y ventas de una tienda de libros y mangas.
 
-## Stack
+## Stack Tecnologico
 
-- **Frontend:** Vue 3 + TypeScript + Vite
-- **Backend:** Express + TypeScript
+- **Frontend:** Vue 3 + TypeScript + Vite + TailwindCSS + shadcn-vue
+- **Backend:** Express + TypeScript + Node.js
 - **Base de datos:** PostgreSQL 16
 - **Contenedores:** Docker + docker-compose
+- **Animaciones:** GSAP
 
-## Requisitos
+## Requisitos Previos
 
-- Docker y docker-compose instalados
+Antes de comenzar, asegurate de tener instalado:
 
-## Levantar el proyecto
+- **Docker Desktop** (version 20.10 o superior)
+  - [Descargar para Windows](https://www.docker.com/products/docker-desktop)
+  - [Descargar para Mac](https://www.docker.com/products/docker-desktop)
+  - [Descargar para Linux](https://docs.docker.com/desktop/install/linux-install/)
+- **Docker Compose** (incluido con Docker Desktop)
+- **Git** (para clonar el repositorio)
+
+Verificar instalacion:
+```bash
+docker --version
+docker compose version
+```
+
+## Instalacion y Configuracion
+
+### 1. Clonar el repositorio
+
+```bash
+git clone <url-del-repositorio>
+cd proyecto2-db
+```
+
+### 2. Configurar variables de entorno (Opcional)
+
+El proyecto ya incluye todas las variables necesarias en `docker-compose.yaml` y `.env.example`.
+
+Si deseas personalizar las credenciales:
+
+```bash
+cp .env.example .env
+# Editar .env con tus valores personalizados
+```
+
+### 3. Levantar el proyecto
+
+**IMPORTANTE:** Si ya levantaste el proyecto antes y tuviste problemas, primero limpia los volumenes:
+
+```bash
+docker compose down -v
+docker volume prune
+```
+
+Luego, levanta todos los servicios:
 
 ```bash
 docker compose up --build
 ```
 
-Esto levanta 3 servicios:
+Este comando hace lo siguiente:
+1. Construye las imagenes de frontend y backend
+2. Levanta contenedor PostgreSQL
+3. Inicializa base de datos con esquema DDL y datos seed
+4. Levanta API REST backend
+5. Levanta aplicacion Vue frontend
 
-| Servicio | Puerto | Descripcion |
-|----------|--------|-------------|
-| db | 5432 | PostgreSQL con esquema y datos seed |
-| backend | 3000 | API REST Express |
-| frontend | 5173 | Aplicacion Vue 3 |
+**Tiempo estimado:** 2-3 minutos en primera ejecucion.
 
-Abrir http://localhost:5173 en el navegador.
+### 4. Acceder a la aplicacion
+
+Una vez que veas en consola:
+```
+backend-1   | Server running on port 3000
+frontend-1  | VITE ready in X ms
+```
+
+Abre en tu navegador:
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:3000/api
+- **Base de datos:** localhost:5432
+
+## Arquitectura de Servicios
+
+| Servicio | Puerto | Descripcion | Healthcheck |
+|----------|--------|-------------|-------------|
+| **db** | 5432 | PostgreSQL 16 con datos seed | pg_isready |
+| **db-init** | - | Inicializa esquema y seed (ejecucion unica) | - |
+| **backend** | 3000 | API REST Express + TypeScript | - |
+| **frontend** | 5173 | Aplicacion Vue 3 + Vite | - |
+
+### Dependencias entre servicios
+
+```
+frontend → backend → db-init → db
+```
+
+Los servicios se levantan en orden secuencial para garantizar disponibilidad.
 
 ## Variables de entorno
 
@@ -46,26 +118,232 @@ Estas variables ya estan configuradas en `docker-compose.yaml`.
 - JWT_SECRET protege la integridad de TODOS los tokens - si se compromete, un atacante puede crear tokens validos con cualquier payload (ej. rol admin)
 - 512 bits de entropia criptografica hacen computacionalmente imposible adivinar el secreto
 
-## Usuarios de prueba
+## Usuarios de Prueba
 
-| Usuario | Password | Rol |
-|---------|----------|-----|
-| admin | admin123 | admin |
-| vendedor1 | vend123 | vendedor |
-| cliente1 | cli123 | cliente |
+El sistema incluye usuarios pre-configurados para probar cada rol:
 
-## Documentacion de base de datos
+| Usuario | Password | Rol | Descripcion |
+|---------|----------|-----|-------------|
+| **admin** | admin123 | Administrador | Acceso completo al sistema |
+| **vendedor1** | vend123 | Vendedor | Puede registrar ventas y gestionar productos |
+| **cliente1** | cli123 | Cliente | Puede navegar catalogo y realizar compras |
+
+**Nota:** Tambien puedes registrar nuevos usuarios desde la pagina de registro. Todos los nuevos registros se crean con rol "cliente".
+
+## Troubleshooting (Solucion de Problemas)
+
+### Error: "role proy2 does not exist"
+
+**Causa:** Docker esta usando un volumen de PostgreSQL de una ejecucion anterior con credenciales diferentes.
+
+**Solucion:**
+```bash
+# Detener servicios y eliminar volumenes
+docker compose down -v
+
+# Verificar que no queden volumenes
+docker volume ls | grep proyecto2
+
+# Si aparece algun volumen, eliminarlo manualmente
+docker volume rm proyecto2-db_pgdata
+
+# Levantar de nuevo
+docker compose up --build
+```
+
+### Error: "Port 5432 is already in use"
+
+**Causa:** Ya tienes PostgreSQL corriendo en tu sistema.
+
+**Solucion:**
+```bash
+# Windows: Detener servicio PostgreSQL
+net stop postgresql-x64-16
+
+# Linux/Mac: Detener PostgreSQL
+sudo service postgresql stop
+
+# O cambiar puerto en docker-compose.yaml
+ports:
+  - "5433:5432"  # Usar 5433 en lugar de 5432
+```
+
+### Frontend no carga / Muestra pantalla en blanco
+
+**Solucion:**
+```bash
+# Reconstruir contenedores sin cache
+docker compose build --no-cache
+docker compose up
+```
+
+### Base de datos sin datos seed
+
+**Solucion:**
+```bash
+# Forzar reinicializacion completa
+docker compose down -v
+docker compose up --build
+```
+
+## Funcionalidades del Sistema
+
+### Autenticacion y Autorizacion
+- Login/logout con JWT
+- 3 roles de usuario: admin, vendedor, cliente
+- Proteccion de rutas segun rol
+- Sesiones persistentes con localStorage
+
+### Gestion de Inventario
+- **CRUD Productos:** Crear, editar, eliminar productos (libros, mangas, comics, revistas)
+- **Categorias y Editoriales:** Clasificacion por tipo y editorial
+- **Autores:** Relacion muchos-a-muchos entre productos y autores
+- **Stock:** Control de inventario en tiempo real
+- **Imagenes:** URLs de portadas con fallback visual
+
+### Gestion de Clientes
+- **CRUD Clientes:** Alta, edicion y eliminacion de clientes
+- **Datos completos:** Nombre, email, telefono, direccion
+- **Vinculacion con usuarios:** Clientes pueden tener cuenta de login
+
+### Sistema de Ventas
+- **Registro de ventas:** Diferenciacion entre venta web y venta fisica por empleado
+- **Carrito de compras:** Sistema completo para clientes web
+- **Detalle de venta:** Items con cantidad y precio unitario
+- **Transacciones:** BEGIN/COMMIT/ROLLBACK explicito en registro de ventas
+- **Historial:** Consulta de ventas pasadas con detalle expandible
+- **Filtrado:** Por vendedor (web o empleado especifico)
+
+### Compras a Proveedores
+- **Registro de compras:** Alta de compras con detalle
+- **Proveedores:** Gestion de proveedores y contactos
+- **Historial:** Consulta de compras anteriores
+
+### Dashboard y Reportes
+- **Top 10 productos mas vendidos:** Grafico de barras con Chart.js
+- **Ventas por mes:** Grafico de lineas con tendencia mensual
+- **Stock bajo:** Productos con 5 o menos unidades disponibles
+- **Productos no vendidos:** Inventario sin movimiento
+- **Ranking de clientes:** CTE con clientes ordenados por gasto total
+- **Clientes sobre promedio:** Reporte de clientes que gastaron mas que el promedio
+- **Exportar CSV:** Descarga de reporte de ventas completo
+
+### Catalogo Publico
+- **Navegacion sin login:** Acceso libre al catalogo
+- **Busqueda:** Por titulo o autor
+- **Filtros:** Por tipo de producto (libro, manga, comic, revista)
+- **Vista de producto:** Dialog con detalles completos al hacer click
+- **Agregar al carrito:** Para usuarios autenticados como cliente
+- **Badges:** Stock disponible y tipo de producto
+
+### Caracteristicas Tecnicas
+- **Base de datos:**
+  - Vista `vista_producto_completo` para consultas optimizadas
+  - 5 indices para queries frecuentes (fecha, categoria, editorial, cliente, proveedor)
+  - Consultas con JOINs, subqueries, GROUP BY/HAVING, CTEs
+  - 25 usuarios seed, 36 productos, 25 ventas de ejemplo
+- **Frontend:**
+  - Animaciones GSAP en transiciones
+  - Components shadcn-vue
+  - Responsive design (mobile-first)
+  - SweetAlert2 para notificaciones
+- **Backend:**
+  - Arquitectura REST
+  - Middleware de autenticacion JWT
+  - Guards de roles
+  - Manejo de errores centralizado
+
+## Documentacion de Base de Datos
 
 - [Modelo relacional y normalizacion (3FN)](assets/docs/modelo_relacional_normalizacion.md)
 - [Diagrama ER](assets/img/der%20completo%20bases%20de%20datos%20proyecto%202.png)
 
-## Funcionalidades
+### Esquema Principal
 
-- Login/logout con JWT y roles (admin, vendedor, cliente)
-- CRUD completo de Productos y Clientes
-- Registro de ventas con transaccion explicita (BEGIN/COMMIT/ROLLBACK)
-- Dashboard con reportes: top productos, ventas por mes, stock bajo
-- Catalogo publico de productos con busqueda y filtros
-- Exportar reporte de ventas a CSV
-- Vista (VIEW) `vista_producto_completo` usada por el backend
-- Consultas con JOINs, subqueries, GROUP BY/HAVING, y CTE
+**Entidades:**
+- `usuario` - Autenticacion y roles
+- `cliente` - Datos de clientes
+- `empleado` - Datos de empleados
+- `producto` - Inventario de libros/mangas
+- `categoria` - Clasificacion de productos
+- `editorial` - Editoriales
+- `autor` - Autores de productos
+- `producto_autor` - Relacion M:N productos-autores
+- `venta` - Registro de ventas
+- `detalle_venta` - Items de cada venta
+- `proveedor` - Proveedores
+- `compra_proveedor` - Compras realizadas
+- `detalle_compra` - Items de cada compra
+
+### Indices Creados
+
+```sql
+CREATE INDEX idx_venta_fecha ON venta(fecha);
+CREATE INDEX idx_producto_categoria ON producto(categoria_id);
+CREATE INDEX idx_producto_editorial ON producto(editorial_id);
+CREATE INDEX idx_venta_cliente ON venta(cliente_id);
+CREATE INDEX idx_compra_proveedor ON compra_proveedor(proveedor_id);
+```
+
+## Comandos Utiles
+
+```bash
+# Ver logs de un servicio especifico
+docker compose logs backend
+docker compose logs frontend
+docker compose logs db
+
+# Ver logs en tiempo real
+docker compose logs -f backend
+
+# Reiniciar un servicio
+docker compose restart backend
+
+# Detener servicios
+docker compose down
+
+# Detener y eliminar volumenes (reinicio completo)
+docker compose down -v
+
+# Reconstruir sin cache
+docker compose build --no-cache
+
+# Ver estado de servicios
+docker compose ps
+
+# Entrar a contenedor de base de datos
+docker compose exec db psql -U proy2 -d tienda_libros
+
+# Ejecutar query SQL directamente
+docker compose exec db psql -U proy2 -d tienda_libros -c "SELECT * FROM usuario;"
+```
+
+## Estructura del Proyecto
+
+```
+proyecto2-db/
+├── backend/
+│   ├── src/
+│   │   ├── config/         # Configuracion (DB, env)
+│   │   ├── middleware/     # Auth, validacion
+│   │   ├── routes/         # Endpoints API
+│   │   └── queries/        # SQL queries
+│   ├── index.ts           # Entry point
+│   └── Dockerfile
+├── frontend/
+│   ├── src/
+│   │   ├── components/    # Componentes Vue
+│   │   ├── views/         # Paginas/vistas
+│   │   ├── services/      # API clients
+│   │   ├── stores/        # Pinia stores
+│   │   └── composables/   # Hooks reutilizables
+│   └── Dockerfile
+├── database/
+│   ├── 01-ddl.sql        # Esquema de base de datos
+│   └── 02-seed.sql       # Datos iniciales
+├── assets/
+│   ├── docs/             # Documentacion
+│   └── img/              # Diagramas
+├── docker-compose.yaml   # Orquestacion de servicios
+└── README.md
+```
