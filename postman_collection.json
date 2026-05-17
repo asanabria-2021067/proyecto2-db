@@ -1,0 +1,888 @@
+{
+	"info": {
+		"name": "Tienda de Libros y Mangas - API",
+		"description": "API REST completa para gestión de inventario y ventas de tienda de libros y mangas",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"version": "1.0.0"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000/api",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Autenticación",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"test123\",\n  \"nombre\": \"Usuario Test\",\n  \"email\": \"test@example.com\",\n  \"telefono\": \"12345678\",\n  \"direccion\": \"Ciudad Guatemala\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "register"]
+						},
+						"description": "Registrar un nuevo usuario. Todos los nuevos usuarios se crean con rol 'cliente'."
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"jwt_token\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "Iniciar sesión. El token JWT se guarda automáticamente en la variable de entorno."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Productos",
+			"item": [
+				{
+					"name": "Get All Productos",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/productos",
+							"host": ["{{base_url}}"],
+							"path": ["productos"]
+						},
+						"description": "Obtener todos los productos (endpoint público, no requiere autenticación)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Producto by ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/productos/1",
+							"host": ["{{base_url}}"],
+							"path": ["productos", "1"]
+						},
+						"description": "Obtener un producto específico por ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Producto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"titulo\": \"Naruto Vol. 1\",\n  \"descripcion\": \"Primera edición del manga Naruto\",\n  \"precio\": 45.00,\n  \"stock\": 10,\n  \"isbn\": \"978-1234567890\",\n  \"anio_publicacion\": 2002,\n  \"imagen_url\": \"https://example.com/naruto1.jpg\",\n  \"categoria_id\": 1,\n  \"editorial_id\": 1,\n  \"autores\": [1]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/productos",
+							"host": ["{{base_url}}"],
+							"path": ["productos"]
+						},
+						"description": "Crear un nuevo producto (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Producto",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"titulo\": \"Naruto Vol. 1 (Edición Especial)\",\n  \"descripcion\": \"Primera edición del manga Naruto - Edición Especial\",\n  \"precio\": 55.00,\n  \"stock\": 15,\n  \"isbn\": \"978-1234567890\",\n  \"anio_publicacion\": 2002,\n  \"imagen_url\": \"https://example.com/naruto1.jpg\",\n  \"categoria_id\": 1,\n  \"editorial_id\": 1,\n  \"autores\": [1]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/productos/1",
+							"host": ["{{base_url}}"],
+							"path": ["productos", "1"]
+						},
+						"description": "Actualizar un producto existente (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Producto",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/productos/1",
+							"host": ["{{base_url}}"],
+							"path": ["productos", "1"]
+						},
+						"description": "Eliminar un producto (requiere auth: admin)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Clientes",
+			"item": [
+				{
+					"name": "Get All Clientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/clientes",
+							"host": ["{{base_url}}"],
+							"path": ["clientes"]
+						},
+						"description": "Obtener todos los clientes (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cliente by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/clientes/1",
+							"host": ["{{base_url}}"],
+							"path": ["clientes", "1"]
+						},
+						"description": "Obtener un cliente específico por ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Cliente",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Juan Perez\",\n  \"email\": \"juan@example.com\",\n  \"telefono\": \"12345678\",\n  \"direccion\": \"Ciudad Guatemala\",\n  \"usuario_id\": 5\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clientes",
+							"host": ["{{base_url}}"],
+							"path": ["clientes"]
+						},
+						"description": "Crear un nuevo cliente (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Cliente",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Juan Perez Lopez\",\n  \"email\": \"juanperez@example.com\",\n  \"telefono\": \"87654321\",\n  \"direccion\": \"Zona 10, Guatemala\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clientes/1",
+							"host": ["{{base_url}}"],
+							"path": ["clientes", "1"]
+						},
+						"description": "Actualizar un cliente existente (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Cliente",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/clientes/1",
+							"host": ["{{base_url}}"],
+							"path": ["clientes", "1"]
+						},
+						"description": "Eliminar un cliente (requiere auth: admin)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ventas",
+			"item": [
+				{
+					"name": "Get All Ventas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ventas",
+							"host": ["{{base_url}}"],
+							"path": ["ventas"]
+						},
+						"description": "Obtener todas las ventas (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Venta by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ventas/1",
+							"host": ["{{base_url}}"],
+							"path": ["ventas", "1"]
+						},
+						"description": "Obtener detalle de una venta específica (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Mis Compras",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ventas/mis-compras",
+							"host": ["{{base_url}}"],
+							"path": ["ventas", "mis-compras"]
+						},
+						"description": "Obtener compras del cliente autenticado (requiere auth: cliente)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Venta",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"detalles\": [\n    {\n      \"id_producto\": 1,\n      \"cantidad\": 2,\n      \"precio_unitario\": 45.00\n    },\n    {\n      \"id_producto\": 2,\n      \"cantidad\": 1,\n      \"precio_unitario\": 35.00\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/ventas",
+							"host": ["{{base_url}}"],
+							"path": ["ventas"]
+						},
+						"description": "Registrar una nueva venta. Usa transacción explícita (BEGIN/COMMIT/ROLLBACK) y actualiza stock automáticamente."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Compras a Proveedores",
+			"item": [
+				{
+					"name": "Get All Compras",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/compras",
+							"host": ["{{base_url}}"],
+							"path": ["compras"]
+						},
+						"description": "Obtener todas las compras a proveedores (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Compra by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/compras/1",
+							"host": ["{{base_url}}"],
+							"path": ["compras", "1"]
+						},
+						"description": "Obtener detalle de una compra específica"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Compra",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_proveedor\": 1,\n  \"detalles\": [\n    {\n      \"id_producto\": 1,\n      \"cantidad\": 50,\n      \"precio_unitario\": 25.00\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/compras",
+							"host": ["{{base_url}}"],
+							"path": ["compras"]
+						},
+						"description": "Registrar una nueva compra a proveedor (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reportes",
+			"item": [
+				{
+					"name": "Top Productos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reportes/top-productos",
+							"host": ["{{base_url}}"],
+							"path": ["reportes", "top-productos"]
+						},
+						"description": "Top 10 productos más vendidos (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				},
+				{
+					"name": "Ventas por Mes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reportes/ventas-por-mes",
+							"host": ["{{base_url}}"],
+							"path": ["reportes", "ventas-por-mes"]
+						},
+						"description": "Ventas totales agrupadas por mes (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				},
+				{
+					"name": "Stock Bajo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reportes/stock-bajo",
+							"host": ["{{base_url}}"],
+							"path": ["reportes", "stock-bajo"]
+						},
+						"description": "Productos con stock <= 5 unidades (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				},
+				{
+					"name": "Productos No Vendidos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reportes/productos-no-vendidos",
+							"host": ["{{base_url}}"],
+							"path": ["reportes", "productos-no-vendidos"]
+						},
+						"description": "Productos sin ventas registradas (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				},
+				{
+					"name": "Clientes Sobre Promedio",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reportes/clientes-sobre-promedio",
+							"host": ["{{base_url}}"],
+							"path": ["reportes", "clientes-sobre-promedio"]
+						},
+						"description": "Clientes con gasto total mayor al promedio (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				},
+				{
+					"name": "Ranking Clientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reportes/ranking-clientes",
+							"host": ["{{base_url}}"],
+							"path": ["reportes", "ranking-clientes"]
+						},
+						"description": "Ranking de clientes por gasto total (usa CTE - requiere auth: admin o vendedor)"
+					},
+					"response": []
+				},
+				{
+					"name": "Categorías con Productos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reportes/categorias-con-productos?min=1",
+							"host": ["{{base_url}}"],
+							"path": ["reportes", "categorias-con-productos"],
+							"query": [
+								{
+									"key": "min",
+									"value": "1",
+									"description": "Mínimo de productos por categoría"
+								}
+							]
+						},
+						"description": "Categorías con cantidad de productos (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Exportar",
+			"item": [
+				{
+					"name": "Export Ventas CSV",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/export/ventas-csv",
+							"host": ["{{base_url}}"],
+							"path": ["export", "ventas-csv"]
+						},
+						"description": "Exportar todas las ventas a formato CSV (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Categorías",
+			"item": [
+				{
+					"name": "Get All Categorías",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categorias",
+							"host": ["{{base_url}}"],
+							"path": ["categorias"]
+						},
+						"description": "Obtener todas las categorías (público)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Categoría",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tipo\": \"Manga\",\n  \"nombre\": \"Shonen\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/categorias",
+							"host": ["{{base_url}}"],
+							"path": ["categorias"]
+						},
+						"description": "Crear nueva categoría (requiere auth: admin)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Categoría",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tipo\": \"Manga\",\n  \"nombre\": \"Seinen\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/categorias/1",
+							"host": ["{{base_url}}"],
+							"path": ["categorias", "1"]
+						},
+						"description": "Actualizar categoría (requiere auth: admin)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Categoría",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categorias/1",
+							"host": ["{{base_url}}"],
+							"path": ["categorias", "1"]
+						},
+						"description": "Eliminar categoría (requiere auth: admin)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Editoriales",
+			"item": [
+				{
+					"name": "Get All Editoriales",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/editoriales",
+							"host": ["{{base_url}}"],
+							"path": ["editoriales"]
+						},
+						"description": "Obtener todas las editoriales (público)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Editorial",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Viz Media\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/editoriales",
+							"host": ["{{base_url}}"],
+							"path": ["editoriales"]
+						},
+						"description": "Crear editorial (requiere auth: admin)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Editorial",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Shueisha\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/editoriales/1",
+							"host": ["{{base_url}}"],
+							"path": ["editoriales", "1"]
+						},
+						"description": "Actualizar editorial (requiere auth: admin)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Editorial",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/editoriales/1",
+							"host": ["{{base_url}}"],
+							"path": ["editoriales", "1"]
+						},
+						"description": "Eliminar editorial (requiere auth: admin)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Autores",
+			"item": [
+				{
+					"name": "Get All Autores",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/autores",
+							"host": ["{{base_url}}"],
+							"path": ["autores"]
+						},
+						"description": "Obtener todos los autores (público)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Autor",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Masashi Kishimoto\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/autores",
+							"host": ["{{base_url}}"],
+							"path": ["autores"]
+						},
+						"description": "Crear autor (requiere auth: admin)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Autor",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Eiichiro Oda\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/autores/1",
+							"host": ["{{base_url}}"],
+							"path": ["autores", "1"]
+						},
+						"description": "Actualizar autor (requiere auth: admin)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Autor",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/autores/1",
+							"host": ["{{base_url}}"],
+							"path": ["autores", "1"]
+						},
+						"description": "Eliminar autor (requiere auth: admin)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Proveedores",
+			"item": [
+				{
+					"name": "Get All Proveedores",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/proveedores",
+							"host": ["{{base_url}}"],
+							"path": ["proveedores"]
+						},
+						"description": "Obtener todos los proveedores (requiere auth: admin o vendedor)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Proveedor",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Distribuidora XYZ\",\n  \"contacto\": \"contacto@xyz.com\",\n  \"telefono\": \"12345678\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/proveedores",
+							"host": ["{{base_url}}"],
+							"path": ["proveedores"]
+						},
+						"description": "Crear proveedor (requiere auth: admin)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Proveedor",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Distribuidora ABC\",\n  \"contacto\": \"info@abc.com\",\n  \"telefono\": \"87654321\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/proveedores/1",
+							"host": ["{{base_url}}"],
+							"path": ["proveedores", "1"]
+						},
+						"description": "Actualizar proveedor (requiere auth: admin)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Proveedor",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/proveedores/1",
+							"host": ["{{base_url}}"],
+							"path": ["proveedores", "1"]
+						},
+						"description": "Eliminar proveedor (requiere auth: admin)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Empleados",
+			"item": [
+				{
+					"name": "Get All Empleados",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/empleados",
+							"host": ["{{base_url}}"],
+							"path": ["empleados"]
+						},
+						"description": "Obtener todos los empleados (requiere auth: admin)"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
