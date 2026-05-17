@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid } from 'recharts'
-import { useError } from '@/hooks/useSwal'
+import { showError } from '@/hooks/useSwal'
 import { Download, TrendingUp, Package, Users, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import gsap from 'gsap'
@@ -47,7 +47,7 @@ export default function DashboardPage() {
       reporteService.ventasPorMes().then(r => setVentasMes(r.data)),
       reporteService.stockBajo().then(r => setStockBajo(r.data)),
       reporteService.rankingClientes().then(r => setRanking(r.data)),
-    ]).catch(() => useError('Error', 'Error cargando reportes')).finally(() => {
+    ]).catch(() => showError('Error', 'Error cargando reportes')).finally(() => {
       setLoading(false)
       requestAnimationFrame(() => gsap.from('.dash-card', { y: 20, duration: 0.3, stagger: 0.05, ease: 'power2.out' }))
     })
@@ -61,7 +61,7 @@ export default function DashboardPage() {
       const res = await reporteService.exportCsv()
       const url = window.URL.createObjectURL(new Blob([res.data]))
       const a = document.createElement('a'); a.href = url; a.download = 'ventas.csv'; a.click(); window.URL.revokeObjectURL(url)
-    } catch { useError('Error', 'Error al exportar CSV') }
+    } catch { showError('Error', 'Error al exportar CSV') }
   }, [])
 
   if (loading) return <div className="py-16 text-center text-muted-foreground">Cargando dashboard...</div>

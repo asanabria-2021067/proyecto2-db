@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import ventaService from '@/services/venta.service'
-import { useConfirm, useSuccess, useError } from '@/hooks/useSwal'
+import { showConfirm, showSuccess, showError } from '@/hooks/useSwal'
 import { Minus, Plus, Trash2 } from 'lucide-react'
 
 export default function CarritoPage() {
@@ -15,15 +15,15 @@ export default function CarritoPage() {
 
   const handleComprar = useCallback(async () => {
     if (cart.items.length === 0) return
-    const r = await useConfirm({ title: 'Confirmar compra?', text: `Total: Q${cart.subtotal.toFixed(2)} (${cart.count} items)`, confirmText: 'Si, comprar', icon: 'question' })
+    const r = await showConfirm({ title: 'Confirmar compra?', text: `Total: Q${cart.subtotal.toFixed(2)} (${cart.count} items)`, confirmText: 'Si, comprar', icon: 'question' })
     if (!r.isConfirmed) return
     try {
       const detalles = cart.items.map(it => ({ id_producto: it.producto_id, cantidad: it.cantidad, precio_unitario: it.precio }))
       await ventaService.create({ detalles })
       cart.clear()
-      await useSuccess('Compra realizada', 'Tu pedido ha sido registrado')
+      await showSuccess('Compra realizada', 'Tu pedido ha sido registrado')
       navigate('/mis-compras')
-    } catch (err: any) { await useError('Error', err.response?.data?.error ?? 'Error al realizar compra') }
+    } catch (err: any) { await showError('Error', err.response?.data?.error ?? 'Error al realizar compra') }
   }, [cart, navigate])
 
   return (
