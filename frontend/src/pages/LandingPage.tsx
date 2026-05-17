@@ -155,15 +155,15 @@ export default function LandingPage() {
       </section>
 
       <section className="px-6 py-12">
-        <div className="mx-auto max-w-7xl rounded-[2rem] bg-primary/25 p-10 md:p-16">
-          <Badge className="mb-6 bg-white px-4 py-1 text-xs font-black tracking-widest text-black">PROMOCION DE LA TIENDA</Badge>
-          <h3 className="max-w-3xl font-heading text-5xl font-black leading-[0.9] tracking-tight text-black md:text-7xl">
+        <div className="mx-auto max-w-7xl rounded-[2rem] bg-gradient-to-br from-primary/20 via-accent/15 to-primary/10 border border-primary/20 p-10 md:p-16">
+          <Badge className="mb-6 bg-primary/15 border-primary/30 px-4 py-1 text-xs font-black tracking-widest text-primary">PROMOCION DE LA TIENDA</Badge>
+          <h3 className="max-w-3xl font-heading text-5xl font-black leading-[0.9] tracking-tight text-foreground md:text-7xl">
             LLEVA 3 Y<br />PAGA SOLO 2
           </h3>
-          <p className="mt-6 max-w-xl text-base font-semibold text-black/80">
+          <p className="mt-6 max-w-xl text-base font-semibold text-muted-foreground">
             Promocion especial de la tienda en seleccion de mangas. Aprovecha para completar colecciones con mejor precio.
           </p>
-          <Button className="mt-8 h-12 rounded-xl bg-black px-8 font-black text-white hover:bg-black/90 active:scale-[0.98]" onClick={() => navigate('/catalogo')}>Comprar oferta</Button>
+          <Button className="mt-8 h-12 rounded-xl px-8 font-black active:scale-[0.98]" onClick={() => navigate('/catalogo')}>Comprar oferta</Button>
         </div>
       </section>
     </div>
