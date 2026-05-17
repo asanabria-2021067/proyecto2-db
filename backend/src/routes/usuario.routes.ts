@@ -29,7 +29,7 @@ router.get('/', authMiddleware, roleGuard('admin'), async (_req: Request, res: R
 router.get('/:id', authMiddleware, roleGuard('admin'), async (req: Request, res: Response) => {
 	try {
 		const usuario = await prisma.usuario.findUnique({
-			where: { id_usuario: parseInt(req.params['id'] ?? '0') },
+			where: { id_usuario: parseInt((req.params.id as string) ?? '0') },
 			select: {
 				id_usuario: true,
 				username: true,
@@ -96,7 +96,7 @@ router.put('/:id', authMiddleware, roleGuard('admin'), async (req: Request, res:
 		if (password) data.password_hash = await bcrypt.hash(password, 10);
 
 		const usuario = await prisma.usuario.update({
-			where: { id_usuario: parseInt(req.params['id'] ?? '0') },
+			where: { id_usuario: parseInt((req.params.id as string) ?? '0') },
 			data,
 			select: {
 				id_usuario: true,
@@ -123,7 +123,7 @@ router.put('/:id', authMiddleware, roleGuard('admin'), async (req: Request, res:
 router.delete('/:id', authMiddleware, roleGuard('admin'), async (req: Request, res: Response) => {
 	try {
 		await prisma.usuario.delete({
-			where: { id_usuario: parseInt(req.params['id'] ?? '0') },
+			where: { id_usuario: parseInt((req.params.id as string) ?? '0') },
 		});
 		res.json({ message: 'Usuario eliminado' });
 	} catch (err: any) {
