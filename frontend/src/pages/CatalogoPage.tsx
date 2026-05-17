@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { useSuccess, useError } from '@/hooks/useSwal'
+import { showSuccess, showError } from '@/hooks/useSwal'
 import { ShoppingCart } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -36,9 +36,9 @@ export default function CatalogoPage() {
   const tipos = useMemo(() => [...new Set(productos.map((p: any) => p.tipo))], [productos])
 
   const agregarAlCarrito = useCallback(async (producto: any) => {
-    if (producto.stock <= 0) { useError('Sin stock', 'Este producto esta agotado'); return }
+    if (producto.stock <= 0) { showError('Sin stock', 'Este producto esta agotado'); return }
     cart.addItem(producto, 1)
-    await useSuccess('Agregado', `"${producto.titulo}" se agrego al carrito`)
+    await showSuccess('Agregado', `"${producto.titulo}" se agrego al carrito`)
   }, [cart])
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function CatalogoPage() {
       cart.syncStock(res.data)
       setLoading(false)
     }).catch(() => setLoading(false))
-  }, [])
+  }, [cart])
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">

@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { useConfirm, useSuccess, useError } from '@/hooks/useSwal'
+import { showConfirm, showSuccess, showError } from '@/hooks/useSwal'
 
 export default function ClientesPage() {
   const [clientes, setClientes] = useState<any[]>([])
@@ -21,7 +21,7 @@ export default function ClientesPage() {
   const paginated = useMemo(() => clientes.slice((page - 1) * perPage, page * perPage), [clientes, page])
 
   const load = useCallback(async () => {
-    try { const r = await clienteService.getAll(); setClientes(r.data) } catch { useError('Error', 'No se pudieron cargar los clientes') }
+    try { const r = await clienteService.getAll(); setClientes(r.data) } catch { showError('Error', 'No se pudieron cargar los clientes') }
   }, [])
 
   const validate = useCallback(() => {
@@ -31,17 +31,17 @@ export default function ClientesPage() {
   const save = useCallback(async (e: React.FormEvent) => {
     e.preventDefault(); const errs = validate(); setFormErrors(errs); if (errs.length) return
     try {
-      if (editing) { await clienteService.update(editing.id_cliente, form); await useSuccess('Actualizado', 'Cliente actualizado') }
-      else { await clienteService.create(form); await useSuccess('Creado', 'Cliente creado') }
+      if (editing) { await clienteService.update(editing.id_cliente, form); await showSuccess('Actualizado', 'Cliente actualizado') }
+      else { await clienteService.create(form); await showSuccess('Creado', 'Cliente creado') }
       setShowForm(false); await load()
-    } catch (err: any) { useError('Error', err.response?.data?.error ?? 'Error al guardar') }
+    } catch (err: any) { showError('Error', err.response?.data?.error ?? 'Error al guardar') }
   }, [form, editing, validate, load])
 
   const remove = useCallback(async (id: number) => {
-    const r = await useConfirm({ title: 'Eliminar cliente?', text: 'Esta accion no se puede deshacer.', confirmText: 'Si, eliminar' })
+    const r = await showConfirm({ title: 'Eliminar cliente?', text: 'Esta accion no se puede deshacer.', confirmText: 'Si, eliminar' })
     if (!r.isConfirmed) return
-    try { await clienteService.remove(id); await useSuccess('Eliminado', 'Cliente eliminado'); await load() }
-    catch (err: any) { useError('Error', err.response?.data?.error ?? 'Error al eliminar') }
+    try { await clienteService.remove(id); await showSuccess('Eliminado', 'Cliente eliminado'); await load() }
+    catch (err: any) { showError('Error', err.response?.data?.error ?? 'Error al eliminar') }
   }, [load])
 
   useEffect(() => { load() }, [load])
