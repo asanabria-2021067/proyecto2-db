@@ -15,7 +15,7 @@ const swalDefaults = {
   },
 }
 
-export function useConfirm(opts: {
+export function showConfirm(opts: {
   title: string
   text?: string
   confirmText?: string
@@ -38,7 +38,7 @@ export function useConfirm(opts: {
   })
 }
 
-export function useSuccess(title: string, text?: string) {
+export function showSuccess(title: string, text?: string) {
   return Swal.fire({
     ...swalDefaults,
     title,
@@ -52,7 +52,7 @@ export function useSuccess(title: string, text?: string) {
   })
 }
 
-export function useError(title: string, text?: string) {
+export function showError(title: string, text?: string) {
   return Swal.fire({
     ...swalDefaults,
     title,
@@ -63,3 +63,8 @@ export function useError(title: string, text?: string) {
     buttonsStyling: false,
   })
 }
+
+// Keep old names for backwards compatibility (deprecated)
+export const useConfirm = showConfirm
+export const useSuccess = showSuccess
+export const useError = showError
