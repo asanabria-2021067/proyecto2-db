@@ -17,6 +17,12 @@ Aplicacion web fullstack para gestionar inventario y ventas de una tienda de lib
 
 > **Nota sobre la migracion:** El profesor Erick indico que se podia mantener el stack original con Vue, sin embargo se opto por migrar a React para poner en practica los hooks de React (`useState`, `useEffect`, `useReducer`, `useMemo`, `useCallback`) como parte de los requerimientos del curso cc3062.
 
+## Enlaces de Producción (Deploy)
+
+- **Frontend (Netlify):** [https://hilarious-sundae-6374bd.netlify.app/](https://hilarious-sundae-6374bd.netlify.app/)
+- **Backend API (Vercel):** [https://proyecto2-db.vercel.app](https://proyecto2-db.vercel.app)
+- **Base de Datos:** Alojada de forma remota en **PostgreSQL (Supabase)**.
+
 ## Requisitos Previos
 
 Antes de comenzar, asegurate de tener instalado:
@@ -110,14 +116,24 @@ Los servicios se levantan en orden secuencial para garantizar disponibilidad.
 
 ## Variables de entorno
 
-```
+El proyecto maneja dos conjuntos de variables de entorno, en cumplimiento con lo solicitado en las instrucciones (una configuracion para el entorno local y otra distinta para el entorno de produccion):
+
+**Entorno Local (Docker):**
+```env
 POSTGRES_USER=proy2
 POSTGRES_PASSWORD=secret
 POSTGRES_DB=tienda_libros
 JWT_SECRET=a58357173f277af9328127d173d9efe57d8c91f0efdcab66b7a4158af776ac61ca985e7b696ed7ab5c9e8b536a3efbd1f0dae3f05078fe8e14c22192ee12d68d
 ```
 
-Estas variables ya estan configuradas en `docker-compose.yaml`.
+Estas variables ya estan configuradas en `docker-compose.yaml` y usan el contenedor local `db`.
+
+**Entorno de Produccion (Hosteado):**
+Al estar alojado en la nube, el backend en Vercel utiliza variables distintas para conectarse a la base de datos alojada en PostgreSQL (Supabase), demostrando la correcta separacion de entornos solicitada:
+- `DB_HOST`: aws-1-us-east-1.pooler.supabase.com
+- `DB_PORT`: 6543
+- `DB_USER` / `DB_PASSWORD` / `DB_NAME`: Credenciales de produccion en Supabase
+- Por su parte, el frontend en Netlify utiliza `VITE_API_URL` para apuntar dinamicamente a la URL del backend alojado en Vercel.
 
 **Nota sobre JWT_SECRET:** El secreto fue generado usando https://jwtsecrets.com/#generator. Se usa un string hexadecimal de 512 bits (128 caracteres) con entropia criptografica en lugar de un nombre o frase porque:
 - Nombres/frases predecibles son vulnerables a ataques de diccionario
