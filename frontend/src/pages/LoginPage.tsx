@@ -5,7 +5,7 @@ import api from '@/services/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useSuccess, useError } from '@/hooks/useSwal'
+import { showSuccess, showError } from '@/hooks/useSwal'
 import gsap from 'gsap'
 
 export default function LoginPage() {
@@ -38,12 +38,12 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await auth.login(username, password)
-      await useSuccess('Bienvenido', `Sesion iniciada como ${username}`)
+      await showSuccess('Bienvenido', `Sesion iniciada como ${username}`)
       if (auth.rol === 'cliente') navigate('/catalogo')
       else navigate('/dashboard')
     } catch {
       setError('Credenciales invalidas')
-      await useError('Error de autenticacion', 'Usuario o password incorrectos')
+      await showError('Error de autenticacion', 'Usuario o password incorrectos')
       gsap.fromTo('.login-error', { x: -8 }, { x: 0, duration: 0.4, ease: 'elastic.out(1, 0.3)' })
     } finally {
       setLoading(false)

@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useSuccess, useError } from '@/hooks/useSwal'
+import { showSuccess, showError } from '@/hooks/useSwal'
 
 export default function RegisterPage() {
   const auth = useAuth()
@@ -30,10 +30,10 @@ export default function RegisterPage() {
     setLoading(true)
     try {
       await auth.register(form)
-      await useSuccess('Registro exitoso', 'Tu cuenta ha sido creada')
+      await showSuccess('Registro exitoso', 'Tu cuenta ha sido creada')
       navigate('/catalogo')
     } catch (err: any) {
-      await useError('Error', err.response?.data?.error ?? 'Error al registrar')
+      await showError('Error', err.response?.data?.error ?? 'Error al registrar')
     } finally { setLoading(false) }
   }, [form, validate, auth, navigate])
 
