@@ -4,11 +4,16 @@ Aplicacion web fullstack para gestionar inventario y ventas de una tienda de lib
 
 ## Stack Tecnologico
 
-- **Frontend:** Vue 3 + TypeScript + Vite + TailwindCSS + shadcn-vue
-- **Backend:** Express + TypeScript + Node.js
+- **Frontend:** React 19 + TypeScript + Vite + TailwindCSS v4 + shadcn/ui + Recharts
+- **Backend:** Express 5 + TypeScript + Node.js
 - **Base de datos:** PostgreSQL 16
 - **Contenedores:** Docker + docker-compose
-- **Animaciones:** GSAP
+- **Animaciones:** GSAP + Framer Motion
+- **Notificaciones:** SweetAlert2
+- **Testing:** Vitest + React Testing Library
+- **Linting:** ESLint con typescript-eslint
+
+> **Nota sobre la migracion:** El profesor Erick indico que se podia mantener el stack original con Vue, sin embargo se opto por migrar a React para poner en practica los hooks de React (`useState`, `useEffect`, `useReducer`, `useMemo`, `useCallback`) como parte de los requerimientos del curso cc3062.
 
 ## Requisitos Previos
 
@@ -67,7 +72,7 @@ Este comando hace lo siguiente:
 2. Levanta contenedor PostgreSQL
 3. Inicializa base de datos con esquema DDL y datos seed
 4. Levanta API REST backend
-5. Levanta aplicacion Vue frontend
+5. Levanta aplicacion React frontend
 
 **Tiempo estimado:** 2-3 minutos en primera ejecucion.
 
@@ -91,7 +96,7 @@ Abre en tu navegador:
 | **db** | 5432 | PostgreSQL 16 con datos seed | pg_isready |
 | **db-init** | - | Inicializa esquema y seed (ejecucion unica) | - |
 | **backend** | 3000 | API REST Express + TypeScript | - |
-| **frontend** | 5173 | Aplicacion Vue 3 + Vite | - |
+| **frontend** | 5173 | Aplicacion React 19 + Vite | - |
 
 ### Dependencias entre servicios
 
@@ -220,8 +225,8 @@ docker compose up --build
 - **Historial:** Consulta de compras anteriores
 
 ### Dashboard y Reportes
-- **Top 10 productos mas vendidos:** Grafico de barras con Chart.js
-- **Ventas por mes:** Grafico de lineas con tendencia mensual
+- **Top 10 productos mas vendidos:** Grafico de barras con Recharts
+- **Ventas por mes:** Grafico de lineas con Recharts
 - **Stock bajo:** Productos con 5 o menos unidades disponibles
 - **Productos no vendidos:** Inventario sin movimiento
 - **Ranking de clientes:** CTE con clientes ordenados por gasto total
@@ -243,10 +248,17 @@ docker compose up --build
   - Consultas con JOINs, subqueries, GROUP BY/HAVING, CTEs
   - 25 usuarios seed, 36 productos, 25 ventas de ejemplo
 - **Frontend:**
-  - Animaciones GSAP en transiciones
-  - Components shadcn-vue
+  - React Context API (AuthContext, CartContext, ThemeContext)
+  - useReducer para estado complejo del carrito
+  - useMemo/useCallback para optimizacion de renders
+  - Animaciones GSAP + Framer Motion
+  - Componentes shadcn/ui (Radix UI + TailwindCSS)
+  - Modo claro/oscuro con toggle
   - Responsive design (mobile-first)
   - SweetAlert2 para notificaciones
+  - React Router v7 con 14 rutas
+  - Lazy loading de paginas con Suspense
+  - 6 tests unitarios con Vitest
 - **Backend:**
   - Arquitectura REST
   - Middleware de autenticacion JWT
@@ -332,11 +344,13 @@ proyecto2-db/
 │   └── Dockerfile
 ├── frontend/
 │   ├── src/
-│   │   ├── components/    # Componentes Vue
-│   │   ├── views/         # Paginas/vistas
-│   │   ├── services/      # API clients
-│   │   ├── stores/        # Pinia stores
-│   │   └── composables/   # Hooks reutilizables
+│   │   ├── components/    # Componentes React (UI, layout, forms)
+│   │   ├── pages/         # Paginas (lazy-loaded)
+│   │   ├── contexts/      # React Context (Auth, Cart, Theme)
+│   │   ├── services/      # API clients (axios)
+│   │   ├── hooks/         # Custom hooks (useSwal)
+│   │   ├── lib/           # Utilidades (cn)
+│   │   └── __tests__/     # Tests unitarios
 │   └── Dockerfile
 ├── database/
 │   ├── 01-ddl.sql        # Esquema de base de datos
