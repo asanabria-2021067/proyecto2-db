@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://proyecto2-db.vercel.app/api' : '/api'),
 })
 
 api.interceptors.request.use((config) => {
