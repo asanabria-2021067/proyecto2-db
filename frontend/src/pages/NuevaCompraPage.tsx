@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useConfirm, useSuccess, useError } from '@/hooks/useSwal'
+import { showConfirm, showSuccess, showError } from '@/hooks/useSwal'
 import { Trash2, Plus, Minus } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -39,7 +39,7 @@ export default function NuevaCompraPage() {
 
   const addItem = useCallback(() => {
     if (!selectedProducto || cantidad <= 0 || !precioUnit || Number(precioUnit) <= 0) {
-      useError('Error', 'Selecciona un producto, cantidad y precio validos')
+      showError('Error', 'Selecciona un producto, cantidad y precio validos')
       return
     }
     const prod = productos.find(p => String(p.id_producto) === selectedProducto)
@@ -61,17 +61,17 @@ export default function NuevaCompraPage() {
   }, [])
 
   const handleSubmit = useCallback(async () => {
-    if (!proveedorId) { useError('Error', 'Selecciona un proveedor'); return }
-    if (items.length === 0) { useError('Error', 'Agrega al menos un producto'); return }
-    const r = await useConfirm({ title: 'Confirmar compra?', text: `Total: Q${total.toFixed(2)} (${items.length} productos)`, confirmText: 'Si, registrar', icon: 'question' })
+    if (!proveedorId) { showError('Error', 'Selecciona un proveedor'); return }
+    if (items.length === 0) { showError('Error', 'Agrega al menos un producto'); return }
+    const r = await showConfirm({ title: 'Confirmar compra?', text: `Total: Q${total.toFixed(2)} (${items.length} productos)`, confirmText: 'Si, registrar', icon: 'question' })
     if (!r.isConfirmed) return
     setLoading(true)
     try {
       await compraService.create({ proveedor_id: Number(proveedorId), items: items.map(it => ({ producto_id: it.producto_id, cantidad: it.cantidad, precio_unitario: it.precio_unitario })) })
-      await useSuccess('Compra registrada', 'El stock se ha actualizado')
+      await showSuccess('Compra registrada', 'El stock se ha actualizado')
       navigate('/compras')
     } catch (err: any) {
-      useError('Error', err.response?.data?.error ?? 'Error al registrar compra')
+      showError('Error', err.response?.data?.error ?? 'Error al registrar compra')
     } finally { setLoading(false) }
   }, [proveedorId, items, total, navigate])
 

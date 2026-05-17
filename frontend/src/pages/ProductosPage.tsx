@@ -4,7 +4,7 @@ import ProductoForm from '@/components/ProductoForm'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { useConfirm, useSuccess, useError } from '@/hooks/useSwal'
+import { showConfirm, showSuccess, showError } from '@/hooks/useSwal'
 
 export default function ProductosPage() {
   const [productos, setProductos] = useState<any[]>([])
@@ -17,22 +17,22 @@ export default function ProductosPage() {
   const paginated = useMemo(() => productos.slice((page - 1) * perPage, page * perPage), [productos, page])
 
   async function load() {
-    try { const res = await productoService.getAll(); setProductos(res.data) } catch { useError('Error', 'No se pudieron cargar los productos') }
+    try { const res = await productoService.getAll(); setProductos(res.data) } catch { showError('Error', 'No se pudieron cargar los productos') }
   }
 
   async function save(data: any) {
     try {
-      if (editing?.id_producto) { await productoService.update(editing.id_producto, data); await useSuccess('Actualizado', 'Producto actualizado') }
-      else { await productoService.create(data); await useSuccess('Creado', 'Producto creado') }
+      if (editing?.id_producto) { await productoService.update(editing.id_producto, data); await showSuccess('Actualizado', 'Producto actualizado') }
+      else { await productoService.create(data); await showSuccess('Creado', 'Producto creado') }
       setShowForm(false); await load()
-    } catch (err: any) { useError('Error', err.response?.data?.error ?? 'Error al guardar') }
+    } catch (err: any) { showError('Error', err.response?.data?.error ?? 'Error al guardar') }
   }
 
   async function remove(id: number) {
-    const r = await useConfirm({ title: 'Eliminar producto?', text: 'Esta accion no se puede deshacer.', confirmText: 'Si, eliminar' })
+    const r = await showConfirm({ title: 'Eliminar producto?', text: 'Esta accion no se puede deshacer.', confirmText: 'Si, eliminar' })
     if (!r.isConfirmed) return
-    try { await productoService.remove(id); await useSuccess('Eliminado', 'Producto eliminado'); await load() }
-    catch (err: any) { useError('Error', err.response?.data?.error ?? 'Error al eliminar') }
+    try { await productoService.remove(id); await showSuccess('Eliminado', 'Producto eliminado'); await load() }
+    catch (err: any) { showError('Error', err.response?.data?.error ?? 'Error al eliminar') }
   }
 
   useEffect(() => { load() }, [])
