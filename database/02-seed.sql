@@ -1,10 +1,12 @@
 -- Seed data - Tienda de Libros y Mangas
 
 -- Usuarios (passwords hasheadas con pgcrypto, compatibles con bcryptjs)
--- admin/admin123, vendedor1/vend123, cliente1/cli123
+-- admin/admin123, gerente1/ger123, vendedor1/vend123, bodeguero1/bod123, cliente1/cli123
 INSERT INTO usuario (username, password_hash, rol) VALUES
 	('admin', crypt('admin123', gen_salt('bf', 10)), 'admin'),
+	('gerente1', crypt('ger123', gen_salt('bf', 10)), 'gerente'),
 	('vendedor1', crypt('vend123', gen_salt('bf', 10)), 'vendedor'),
+	('bodeguero1', crypt('bod123', gen_salt('bf', 10)), 'bodeguero'),
 	('cliente1', crypt('cli123', gen_salt('bf', 10)), 'cliente'),
 	('cliente2', crypt('cli123', gen_salt('bf', 10)), 'cliente');
 
