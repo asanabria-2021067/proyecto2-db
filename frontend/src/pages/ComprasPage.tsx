@@ -17,7 +17,10 @@ export default function ComprasPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6"><div className="flex items-center gap-3"><h1 className="text-2xl font-bold">Compras a Proveedores</h1><Badge variant="secondary" className="text-xs">{compras.length} total</Badge></div></div>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3"><h1 className="text-2xl font-bold">Compras a Proveedores</h1><Badge variant="secondary" className="text-xs">{compras.length} total</Badge></div>
+        <Button className="gap-1.5 hover:scale-105 transition-transform" onClick={() => navigate('/compras/nueva')}>+ Nueva Compra</Button>
+      </div>
       <div className="rounded-lg border bg-card shadow-sm">
         <Table>
           <TableHeader><TableRow><TableHead className="w-16">ID</TableHead><TableHead>Fecha</TableHead><TableHead>Proveedor</TableHead><TableHead className="text-right">Total</TableHead><TableHead className="text-right">Acciones</TableHead></TableRow></TableHeader>

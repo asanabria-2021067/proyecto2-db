@@ -20,6 +20,7 @@ const ComprasPage = lazy(() => import('./pages/ComprasPage'))
 const CompraDetallePage = lazy(() => import('./pages/CompraDetallePage'))
 const ProductosNoVendidosPage = lazy(() => import('./pages/ProductosNoVendidosPage'))
 const ClientesSobrePromedioPage = lazy(() => import('./pages/ClientesSobrePromedioPage'))
+const NuevaCompraPage = lazy(() => import('./pages/NuevaCompraPage'))
 
 function Loading() {
   return <div className="flex items-center justify-center py-20 text-muted-foreground">Cargando...</div>
@@ -53,6 +54,7 @@ export default function App() {
             <Route path="/ventas" element={<ProtectedRoute roles={['admin', 'vendedor']}><VentasPage /></ProtectedRoute>} />
             <Route path="/ventas/:id" element={<ProtectedRoute roles={['admin', 'vendedor']}><VentaDetallePage /></ProtectedRoute>} />
             <Route path="/compras" element={<ProtectedRoute roles={['admin', 'vendedor']}><ComprasPage /></ProtectedRoute>} />
+            <Route path="/compras/nueva" element={<ProtectedRoute roles={['admin', 'vendedor']}><NuevaCompraPage /></ProtectedRoute>} />
             <Route path="/compras/:id" element={<ProtectedRoute roles={['admin', 'vendedor']}><CompraDetallePage /></ProtectedRoute>} />
             <Route path="/reportes/productos-no-vendidos" element={<ProtectedRoute roles={['admin', 'vendedor']}><ProductosNoVendidosPage /></ProtectedRoute>} />
             <Route path="/reportes/clientes-sobre-promedio" element={<ProtectedRoute roles={['admin', 'vendedor']}><ClientesSobrePromedioPage /></ProtectedRoute>} />
