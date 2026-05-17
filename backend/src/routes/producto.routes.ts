@@ -48,7 +48,7 @@ router.get('/', async (req: Request, res: Response) => {
 router.get('/:id', async (req: Request, res: Response) => {
 	try {
 		const producto = await prisma.producto.findUnique({
-			where: { id_producto: parseInt(req.params['id'] ?? '0') },
+			where: { id_producto: parseInt((req.params.id as string) ?? '0') },
 			include: {
 				categoria: true,
 				editorial: true,
@@ -140,7 +140,7 @@ router.post('/:id/stock', authMiddleware, roleGuard('admin', 'bodeguero'), async
 
 		const result = await client.query(
 			'CALL sp_actualizar_stock($1, $2, $3, $4)',
-			[parseInt(req.params['id'] ?? '0'), cantidad, operacion.toUpperCase(), '']
+			[parseInt((req.params.id as string) ?? '0'), cantidad, operacion.toUpperCase(), '']
 		);
 
 		res.json({ message: result.rows[0].p_resultado });

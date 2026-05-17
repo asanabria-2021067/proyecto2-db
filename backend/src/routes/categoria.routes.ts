@@ -33,7 +33,7 @@ router.put('/:id', authMiddleware, roleGuard('admin'), async (req: Request, res:
 	try {
 		const { nombre, tipo, descripcion } = req.body;
 		const categoria = await prisma.categoria.update({
-			where: { id_categoria: parseInt(req.params['id'] ?? '0') },
+			where: { id_categoria: parseInt((req.params.id as string) ?? '0') },
 			data: { nombre, tipo, descripcion },
 		});
 		res.json(categoria);
@@ -49,7 +49,7 @@ router.put('/:id', authMiddleware, roleGuard('admin'), async (req: Request, res:
 router.delete('/:id', authMiddleware, roleGuard('admin'), async (req: Request, res: Response) => {
 	try {
 		await prisma.categoria.delete({
-			where: { id_categoria: parseInt(req.params['id'] ?? '0') },
+			where: { id_categoria: parseInt((req.params.id as string) ?? '0') },
 		});
 		res.json({ message: 'Categoria eliminada' });
 	} catch (err: any) {
