@@ -13,6 +13,7 @@ import compraRoutes from './src/routes/compra.routes.js';
 import reporteRoutes from './src/routes/reporte.routes.js';
 import exportRoutes from './src/routes/export.routes.js';
 import empleadoRoutes from './src/routes/empleado.routes.js';
+import usuarioRoutes from './src/routes/usuario.routes.js';
 
 const app = express();
 const PORT = 3000;
@@ -32,6 +33,7 @@ app.use('/api/compras', compraRoutes);
 app.use('/api/reportes', reporteRoutes);
 app.use('/api/export', exportRoutes);
 app.use('/api/empleados', empleadoRoutes);
+app.use('/api/usuarios', usuarioRoutes);
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });
