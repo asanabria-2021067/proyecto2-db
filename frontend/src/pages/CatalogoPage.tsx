@@ -62,7 +62,6 @@ export default function CatalogoPage() {
               <ShoppingCart className="h-4 w-4" />Carrito ({cart.count})
             </Button>
           )}
-          {!auth.isLoggedIn && <Button variant="outline" size="sm" onClick={() => navigate('/')}>Volver al inicio</Button>}
         </div>
       </div>
 
