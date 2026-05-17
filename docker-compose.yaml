@@ -26,6 +26,8 @@ services:
       PGPASSWORD: secret
     command: >
       sh -c "
+      sleep 2 &&
+      until psql -h db -U proy2 -d tienda_libros -c 'SELECT 1' > /dev/null 2>&1; do echo 'Esperando a db...'; sleep 2; done &&
       psql -h db -U proy2 -d tienda_libros -v ON_ERROR_STOP=1 -c 'DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;' &&
       psql -h db -U proy2 -d tienda_libros -v ON_ERROR_STOP=1 -f /sql/01-ddl.sql &&
       psql -h db -U proy2 -d tienda_libros -v ON_ERROR_STOP=1 -f /sql/02-seed.sql
