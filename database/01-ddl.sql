@@ -8,7 +8,7 @@ CREATE TABLE usuario (
 	id_usuario		SERIAL PRIMARY KEY,
 	username		VARCHAR(50) UNIQUE NOT NULL,
 	password_hash	VARCHAR(255) NOT NULL,
-	rol				VARCHAR(20) NOT NULL CHECK (rol IN ('admin', 'vendedor', 'cliente')),
+	rol				VARCHAR(20) NOT NULL CHECK (rol IN ('admin', 'gerente', 'vendedor', 'bodeguero', 'cliente')),
 	created_at		TIMESTAMP DEFAULT NOW()
 );
 
