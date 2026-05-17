@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model usuario {
+  id_usuario    Int        @id @default(autoincrement())
+  username      String     @unique @db.VarChar(50)
+  password_hash String     @db.VarChar(255)
+  rol           String     @db.VarChar(20)
+  created_at    DateTime?  @default(now()) @db.Timestamp(6)
+  cliente       cliente?
+  empleado      empleado?
+}
+
+model categoria {
+  id_categoria Int        @id @default(autoincrement())
+  nombre       String     @db.VarChar(100)
+  tipo         String     @db.VarChar(20)
+  descripcion  String?
+  producto     producto[]
+}
+
+model editorial {
+  id_editorial Int        @id @default(autoincrement())
+  nombre       String     @db.VarChar(100)
+  pais         String?    @db.VarChar(50)
+  sitio_web    String?    @db.VarChar(255)
+  producto     producto[]
+}
+
+model autor {
+  id_autor         Int              @id @default(autoincrement())
+  nombre           String           @db.VarChar(100)
+  nacionalidad     String?          @db.VarChar(50)
+  fecha_nacimiento DateTime?        @db.Date
+  producto_autor   producto_autor[]
+}
+
+model producto {
+  id_producto      Int              @id @default(autoincrement())
+  titulo           String           @db.VarChar(255)
+  descripcion      String?
+  precio           Decimal          @db.Decimal(10, 2)
+  stock            Int              @default(0)
+  isbn             String?          @unique @db.VarChar(20)
+  anio_publicacion Int?
+  imagen_url       String?          @db.VarChar(500)
+  categoria_id     Int
+  editorial_id     Int
+  created_at       DateTime?        @default(now()) @db.Timestamp(6)
+  detalle_compra   detalle_compra[]
+  detalle_venta    detalle_venta[]
+  categoria        categoria        @relation(fields: [categoria_id], references: [id_categoria])
+  editorial        editorial        @relation(fields: [editorial_id], references: [id_editorial])
+  producto_autor   producto_autor[]
+}
+
+model producto_autor {
+  producto_id Int
+  autor_id    Int
+  autor       autor    @relation(fields: [autor_id], references: [id_autor], onDelete: Cascade)
+  producto    producto @relation(fields: [producto_id], references: [id_producto], onDelete: Cascade)
+
+  @@id([producto_id, autor_id])
+}
+
+model proveedor {
+  id_proveedor     Int                @id @default(autoincrement())
+  nombre           String             @db.VarChar(100)
+  contacto         String?            @db.VarChar(100)
+  telefono         String?            @db.VarChar(20)
+  email            String?            @db.VarChar(100)
+  direccion        String?
+  compra_proveedor compra_proveedor[]
+}
+
+model compra_proveedor {
+  id_compra      Int              @id @default(autoincrement())
+  proveedor_id   Int
+  fecha          DateTime?        @default(now()) @db.Timestamp(6)
+  total          Decimal          @default(0) @db.Decimal(10, 2)
+  estado         String?          @default("completada") @db.VarChar(20)
+  proveedor      proveedor        @relation(fields: [proveedor_id], references: [id_proveedor])
+  detalle_compra detalle_compra[]
+}
+
+model detalle_compra {
+  id_detalle      Int              @id @default(autoincrement())
+  compra_id       Int
+  producto_id     Int
+  cantidad        Int
+  precio_unitario Decimal          @db.Decimal(10, 2)
+  compra_proveedor compra_proveedor @relation(fields: [compra_id], references: [id_compra], onDelete: Cascade)
+  producto        producto         @relation(fields: [producto_id], references: [id_producto])
+}
+
+model cliente {
+  id_cliente Int       @id @default(autoincrement())
+  nombre     String    @db.VarChar(100)
+  email      String?   @db.VarChar(100)
+  telefono   String?   @db.VarChar(20)
+  direccion  String?
+  usuario_id Int?      @unique
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  usuario    usuario?  @relation(fields: [usuario_id], references: [id_usuario])
+  venta      venta[]
+}
+
+model empleado {
+  id_empleado Int       @id @default(autoincrement())
+  nombre      String    @db.VarChar(100)
+  cargo       String?   @db.VarChar(50)
+  telefono    String?   @db.VarChar(20)
+  email       String?   @db.VarChar(100)
+  usuario_id  Int?      @unique
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  usuario     usuario?  @relation(fields: [usuario_id], references: [id_usuario])
+  venta       venta[]
+}
+
+model venta {
+  id_venta      Int             @id @default(autoincrement())
+  cliente_id    Int
+  empleado_id   Int?
+  fecha         DateTime?       @default(now()) @db.Timestamp(6)
+  total         Decimal         @db.Decimal(10, 2)
+  estado        String?         @default("completada") @db.VarChar(20)
+  detalle_venta detalle_venta[]
+  cliente       cliente         @relation(fields: [cliente_id], references: [id_cliente])
+  empleado      empleado?       @relation(fields: [empleado_id], references: [id_empleado])
+}
+
+model detalle_venta {
+  id_detalle      Int      @id @default(autoincrement())
+  venta_id        Int
+  producto_id     Int
+  cantidad        Int
+  precio_unitario Decimal  @db.Decimal(10, 2)
+  producto        producto @relation(fields: [producto_id], references: [id_producto])
+  venta           venta    @relation(fields: [venta_id], references: [id_venta], onDelete: Cascade)
+}
