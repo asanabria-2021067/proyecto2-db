@@ -2,10 +2,6 @@
 
 @import "tailwindcss";
 
-@import "tw-animate-css";
-
-@import "shadcn-vue/tailwind.css";
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -129,6 +125,12 @@
       radial-gradient(circle at 90% 20%, oklch(0.8 0.12 80 / 0.09), transparent 34%),
       linear-gradient(to bottom, oklch(1 0 0 / 0.08), oklch(1 0 0 / 0.16));
     background-attachment: fixed;
+  }
+  .dark body {
+    background-image:
+      radial-gradient(circle at 10% 0%, oklch(0.35 0.12 250 / 0.15), transparent 38%),
+      radial-gradient(circle at 90% 20%, oklch(0.35 0.12 80 / 0.1), transparent 34%),
+      linear-gradient(to bottom, oklch(0.16 0.015 265), oklch(0.14 0.01 265));
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
