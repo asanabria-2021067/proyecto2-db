@@ -32,6 +32,14 @@ app.use('/api/compras', compraRoutes);
 app.use('/api/reportes', reporteRoutes);
 app.use('/api/export', exportRoutes);
 app.use('/api/empleados', empleadoRoutes);
+
+app.get('/', (req, res) => {
+	res.json({
+		message: 'Bienvenido a la API del Proyecto 2',
+		status: 'success',
+		version: '1.0.0'
+	});
+});
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });
