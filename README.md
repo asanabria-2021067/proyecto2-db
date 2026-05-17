@@ -97,6 +97,36 @@ Abre en tu navegador:
 - **Backend API:** http://localhost:3000/api
 - **Base de datos:** localhost:5432
 
+## Documentacion API REST
+
+**Coleccion de Postman:** [postman_collection.json](postman_collection.json)
+
+Importa la coleccion en Postman para probar todos los endpoints:
+1. Abre Postman
+2. Click en "Import" > "Upload Files"
+3. Selecciona `postman_collection.json`
+4. La variable `{{base_url}}` esta configurada a `http://localhost:3000/api`
+5. El token JWT se guarda automaticamente al hacer login
+
+**Endpoints incluidos:**
+- Autenticacion (login, register)
+- CRUD completo para productos, clientes, ventas, compras, categorias, editoriales, autores, proveedores
+- Reportes y agregaciones (top productos, ventas por mes, stock bajo, ranking clientes)
+- Exportacion a CSV
+- 50+ endpoints documentados
+
+## Tipos de Usuario y Roles
+
+El sistema incluye 3 roles de usuario con diferentes permisos:
+
+| Rol | Username | Password | Permisos |
+|-----|----------|----------|----------|
+| **Administrador** | admin | admin123 | Acceso completo: gestión de productos, clientes, ventas, compras, reportes, categorías, editoriales, autores y proveedores. Puede eliminar registros. |
+| **Vendedor** | vendedor1 | vend123 | Gestión de productos, clientes, ventas, compras y reportes. No puede eliminar categorías, editoriales, autores ni proveedores. |
+| **Cliente** | cliente1 | cli123 | Navegación de catálogo, gestión de carrito, realizar compras y ver historial de compras. Acceso limitado a funciones de venta. |
+
+**Nota:** Todos los nuevos usuarios registrados desde la página de registro se crean automáticamente con rol **cliente**.
+
 ## Arquitectura de Servicios
 
 | Servicio | Puerto | Descripcion | Healthcheck |
@@ -141,17 +171,6 @@ Al estar alojado en la nube, el backend en Vercel utiliza variables distintas pa
 - JWT_SECRET protege la integridad de TODOS los tokens - si se compromete, un atacante puede crear tokens validos con cualquier payload (ej. rol admin)
 - 512 bits de entropia criptografica hacen computacionalmente imposible adivinar el secreto
 
-## Usuarios de Prueba
-
-El sistema incluye usuarios pre-configurados para probar cada rol:
-
-| Usuario | Password | Rol | Descripcion |
-|---------|----------|-----|-------------|
-| **admin** | admin123 | Administrador | Acceso completo al sistema |
-| **vendedor1** | vend123 | Vendedor | Puede registrar ventas y gestionar productos |
-| **cliente1** | cli123 | Cliente | Puede navegar catalogo y realizar compras |
-
-**Nota:** Tambien puedes registrar nuevos usuarios desde la pagina de registro. Todos los nuevos registros se crean con rol "cliente".
 
 ## Troubleshooting (Solucion de Problemas)
 
