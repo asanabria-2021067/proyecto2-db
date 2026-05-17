@@ -26,4 +26,28 @@ router.get('/:id/detalle', authMiddleware, roleGuard('admin', 'vendedor'), async
 	}
 });
 
+// SP invocation (Req 15 pts)
+router.post('/sp', authMiddleware, roleGuard('admin', 'bodeguero'), async (req: Request, res: Response) => {
+	const client = await pool.connect();
+	try {
+		const { proveedor_id, detalle } = req.body;
+
+		if (!proveedor_id || !detalle || !Array.isArray(detalle) || detalle.length === 0) {
+			res.status(400).json({ error: 'Proveedor y detalle son requeridos' });
+			return;
+		}
+
+		const result = await client.query(
+			'CALL sp_registrar_compra_proveedor($1, $2::JSON, $3)',
+			[proveedor_id, JSON.stringify(detalle), '']
+		);
+
+		res.status(201).json({ message: result.rows[0].p_resultado });
+	} catch (err: any) {
+		res.status(400).json({ error: err.message || 'Error al registrar compra con SP' });
+	} finally {
+		client.release();
+	}
+});
+
 export default router;

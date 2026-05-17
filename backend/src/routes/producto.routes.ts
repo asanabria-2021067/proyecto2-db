@@ -1,30 +1,71 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import pool from '../config/db.js';
+import prisma from '../config/prisma.js';
 import { authMiddleware, roleGuard } from '../middleware/auth.js';
 import * as Q from '../queries/producto.queries.js';
 
 const router = express.Router();
 
-// GET all - uses VIEW vista_producto_completo
-router.get('/', async (_req: Request, res: Response) => {
+// GET all - Prisma CRUD (Req 10 pts)
+router.get('/', async (req: Request, res: Response) => {
 	try {
-		const result = await pool.query(Q.GET_ALL);
-		res.json(result.rows);
+		const { search, categoria_id } = req.query;
+		const where: any = {};
+
+		if (search && typeof search === 'string') {
+			where.OR = [
+				{ titulo: { contains: search, mode: 'insensitive' } },
+				{ descripcion: { contains: search, mode: 'insensitive' } },
+			];
+		}
+
+		if (categoria_id && typeof categoria_id === 'string') {
+			where.categoria_id = parseInt(categoria_id);
+		}
+
+		const productos = await prisma.producto.findMany({
+			where,
+			include: {
+				categoria: true,
+				editorial: true,
+				producto_autor: {
+					include: {
+						autor: true,
+					},
+				},
+			},
+			orderBy: { created_at: 'desc' },
+		});
+
+		res.json(productos);
 	} catch {
 		res.status(500).json({ error: 'Error al obtener productos' });
 	}
 });
 
-// GET by id
+// GET by id - Prisma CRUD
 router.get('/:id', async (req: Request, res: Response) => {
 	try {
-		const result = await pool.query(Q.GET_BY_ID, [req.params['id']]);
-		if (result.rows.length === 0) {
+		const producto = await prisma.producto.findUnique({
+			where: { id_producto: parseInt(req.params['id'] ?? '0') },
+			include: {
+				categoria: true,
+				editorial: true,
+				producto_autor: {
+					include: {
+						autor: true,
+					},
+				},
+			},
+		});
+
+		if (!producto) {
 			res.status(404).json({ error: 'Producto no encontrado' });
 			return;
 		}
-		res.json(result.rows[0]);
+
+		res.json(producto);
 	} catch {
 		res.status(500).json({ error: 'Error al obtener producto' });
 	}
@@ -83,6 +124,30 @@ router.delete('/:id', authMiddleware, roleGuard('admin'), async (req: Request, r
 		res.json({ message: 'Producto eliminado' });
 	} catch {
 		res.status(500).json({ error: 'Error al eliminar producto' });
+	}
+});
+
+// SP invocation (Req 15 pts)
+router.post('/:id/stock', authMiddleware, roleGuard('admin', 'bodeguero'), async (req: Request, res: Response) => {
+	const client = await pool.connect();
+	try {
+		const { cantidad, operacion } = req.body;
+
+		if (!cantidad || !operacion) {
+			res.status(400).json({ error: 'Cantidad y operacion son requeridos' });
+			return;
+		}
+
+		const result = await client.query(
+			'CALL sp_actualizar_stock($1, $2, $3, $4)',
+			[parseInt(req.params['id'] ?? '0'), cantidad, operacion.toUpperCase(), '']
+		);
+
+		res.json({ message: result.rows[0].p_resultado });
+	} catch (err: any) {
+		res.status(400).json({ error: err.message || 'Error al actualizar stock con SP' });
+	} finally {
+		client.release();
 	}
 });
 

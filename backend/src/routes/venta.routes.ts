@@ -140,4 +140,38 @@ router.post('/', authMiddleware, roleGuard('admin', 'vendedor', 'cliente'), asyn
 	}
 });
 
+// SP invocation (Req 15 pts + 10 pts INOUT/exception)
+router.post('/sp', authMiddleware, roleGuard('admin', 'vendedor', 'cliente'), async (req: Request, res: Response) => {
+	const client = await pool.connect();
+	try {
+		let { cliente_id, empleado_id, detalle } = req.body;
+
+		if (req.user!.rol === 'cliente') {
+			const clienteResult = await client.query(Q.GET_CLIENTE_BY_USUARIO, [req.user!.id_usuario]);
+			if (clienteResult.rows.length === 0) {
+				res.status(400).json({ error: 'No se encontro perfil de cliente' });
+				return;
+			}
+			cliente_id = clienteResult.rows[0].id_cliente;
+			empleado_id = null;
+		}
+
+		if (!cliente_id || !detalle || !Array.isArray(detalle) || detalle.length === 0) {
+			res.status(400).json({ error: 'Cliente y detalle son requeridos' });
+			return;
+		}
+
+		const result = await client.query(
+			'CALL sp_registrar_venta($1, $2, $3::JSON, $4)',
+			[cliente_id, empleado_id ?? null, JSON.stringify(detalle), '']
+		);
+
+		res.status(201).json({ message: result.rows[0].p_resultado });
+	} catch (err: any) {
+		res.status(400).json({ error: err.message || 'Error al registrar venta con SP' });
+	} finally {
+		client.release();
+	}
+});
+
 export default router;

@@ -70,4 +70,28 @@ router.get('/stock-bajo', authMiddleware, roleGuard('admin', 'vendedor'), async 
 	}
 });
 
+// SP invocation (Req 15 pts)
+router.get('/ventas-periodo', authMiddleware, roleGuard('admin', 'vendedor', 'gerente'), async (req: Request, res: Response) => {
+	const client = await pool.connect();
+	try {
+		const { fecha_inicio, fecha_fin } = req.query;
+
+		if (!fecha_inicio || !fecha_fin) {
+			res.status(400).json({ error: 'Fecha inicio y fecha fin son requeridas' });
+			return;
+		}
+
+		const result = await client.query(
+			'CALL sp_reporte_ventas_periodo($1, $2, $3)',
+			[fecha_inicio, fecha_fin, '[]']
+		);
+
+		res.json(result.rows[0].p_resultado);
+	} catch (err: any) {
+		res.status(400).json({ error: err.message || 'Error al generar reporte con SP' });
+	} finally {
+		client.release();
+	}
+});
+
 export default router;

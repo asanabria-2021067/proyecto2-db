@@ -65,4 +65,28 @@ router.delete('/:id', authMiddleware, roleGuard('admin'), async (req: Request, r
 	}
 });
 
+// SP invocation (Req 15 pts)
+router.post('/sp', authMiddleware, roleGuard('admin', 'vendedor'), async (req: Request, res: Response) => {
+	const client = await pool.connect();
+	try {
+		const { nombre, email, telefono, direccion, usuario_id } = req.body;
+
+		if (!nombre) {
+			res.status(400).json({ error: 'Nombre es requerido' });
+			return;
+		}
+
+		const result = await client.query(
+			'CALL sp_crear_cliente($1, $2, $3, $4, $5, $6)',
+			[nombre, email ?? null, telefono ?? null, direccion ?? null, usuario_id ?? null, '']
+		);
+
+		res.status(201).json({ message: result.rows[0].p_resultado });
+	} catch (err: any) {
+		res.status(400).json({ error: err.message || 'Error al crear cliente con SP' });
+	} finally {
+		client.release();
+	}
+});
+
 export default router;
