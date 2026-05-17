@@ -2,7 +2,7 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: proy2
+      POSTGRES_USER: proy3
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: tienda_libros
     ports:
@@ -10,7 +10,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U proy2 -d tienda_libros"]
+      test: ["CMD-SHELL", "pg_isready -U proy3 -d tienda_libros"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -26,9 +26,11 @@ services:
       PGPASSWORD: secret
     command: >
       sh -c "
-      psql -h db -U proy2 -d tienda_libros -v ON_ERROR_STOP=1 -c 'DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;' &&
-      psql -h db -U proy2 -d tienda_libros -v ON_ERROR_STOP=1 -f /sql/01-ddl.sql &&
-      psql -h db -U proy2 -d tienda_libros -v ON_ERROR_STOP=1 -f /sql/02-seed.sql
+      psql -h db -U proy3 -d tienda_libros -v ON_ERROR_STOP=1 -c 'DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;' &&
+      psql -h db -U proy3 -d tienda_libros -v ON_ERROR_STOP=1 -f /sql/01-ddl.sql &&
+      psql -h db -U proy3 -d tienda_libros -v ON_ERROR_STOP=1 -f /sql/roles.sql &&
+      psql -h db -U proy3 -d tienda_libros -v ON_ERROR_STOP=1 -f /sql/procedures.sql &&
+      psql -h db -U proy3 -d tienda_libros -v ON_ERROR_STOP=1 -f /sql/02-seed.sql
       "
 
   backend:
@@ -44,7 +46,7 @@ services:
       - NODE_ENV=development
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_USER=proy2
+      - DB_USER=proy3
       - DB_PASSWORD=secret
       - DB_NAME=tienda_libros
       - JWT_SECRET=a58357173f277af9328127d173d9efe57d8c91f0efdcab66b7a4158af776ac61ca985e7b696ed7ab5c9e8b536a3efbd1f0dae3f05078fe8e14c22192ee12d68d
