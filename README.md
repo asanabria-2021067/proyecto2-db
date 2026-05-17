@@ -1,61 +1,55 @@
 # Tienda de Libros y Mangas
 
-> **Nota de Evaluación:** El Proyecto 2 de eCommerce se encuentra en la rama `proyecto-2-web`, mientras que el Proyecto 3 de Bases de Datos se encuentra en la rama `proyecto-3`. El enlace al repositorio con la rama correspondiente se adjuntó en la entrega.
+> **Proyecto 3 — CC3088 Bases de Datos 1, UVG, Ciclo 1 2026.**  
+> La rama de entrega es `proyecto-3`. El Proyecto 2 se encuentra en la rama `proyecto-2-web`.
 
-Aplicacion web fullstack para gestionar inventario y ventas de una tienda de libros y mangas.
+Aplicación web fullstack para gestionar inventario y ventas de una tienda de libros y mangas.  
+El Proyecto 3 extiende el P2 agregando: **5 roles a nivel DBMS**, **5 stored procedures**, **ORM con Prisma** y **autenticación con control de acceso por rol**.
 
-## Stack Tecnologico
+---
 
-- **Frontend:** Vue 3 + TypeScript + Vite + TailwindCSS + shadcn-vue
-- **Backend:** Express + TypeScript + Node.js
-- **Base de datos:** PostgreSQL 16
-- **Contenedores:** Docker + docker-compose
-- **Animaciones:** GSAP
+## Stack Tecnológico
+
+| Capa | Tecnología |
+|------|-----------|
+| Frontend | Vue 3 + TypeScript (Composition API) + Vite |
+| Estilos | TailwindCSS + shadcn-vue |
+| Backend | Express + TypeScript + Node.js |
+| ORM | **Prisma** (nuevo en P3) |
+| Base de datos | PostgreSQL 16 |
+| Contenedores | Docker + docker-compose |
+
+---
 
 ## Requisitos Previos
 
-Antes de comenzar, asegurate de tener instalado:
-
-- **Docker Desktop** (version 20.10 o superior)
-  - [Descargar para Windows](https://www.docker.com/products/docker-desktop)
-  - [Descargar para Mac](https://www.docker.com/products/docker-desktop)
-  - [Descargar para Linux](https://docs.docker.com/desktop/install/linux-install/)
+- **Docker Desktop** (versión 20.10 o superior)
 - **Docker Compose** (incluido con Docker Desktop)
-- **Git** (para clonar el repositorio)
+- **Git**
 
-Verificar instalacion:
 ```bash
 docker --version
 docker compose version
 ```
 
-## Instalacion y Configuracion
+---
 
-### 1. Clonar el repositorio
+## Instalación y Configuración
+
+### 1. Clonar el repositorio y cambiar a rama del proyecto
 
 ```bash
 git clone <url-del-repositorio>
 cd proyecto2-db
+git checkout proyecto-3
 ```
 
-### 2. Configurar variables de entorno (Opcional)
+### 2. Levantar el proyecto
 
-El proyecto ya incluye todas las variables necesarias en `docker-compose.yaml` y `.env.example`.
-
-Si deseas personalizar las credenciales:
-
-```bash
-cp .env.example .env
-# Editar .env con tus valores personalizados
-```
-
-### 3. Levantar el proyecto
-
-**IMPORTANTE:** Si ya levantaste el proyecto antes y tuviste problemas, primero limpia los volumenes:
+Si ya levantaste el proyecto antes, primero limpia los volúmenes:
 
 ```bash
 docker compose down -v
-docker volume prune
 ```
 
 Luego, levanta todos los servicios:
@@ -64,261 +58,185 @@ Luego, levanta todos los servicios:
 docker compose up --build
 ```
 
-Este comando hace lo siguiente:
-1. Construye las imagenes de frontend y backend
-2. Levanta contenedor PostgreSQL
-3. Inicializa base de datos con esquema DDL y datos seed
-4. Levanta API REST backend
-5. Levanta aplicacion Vue frontend
+Este comando:
+1. Construye las imágenes de frontend y backend
+2. Levanta el contenedor PostgreSQL
+3. Ejecuta `01-ddl.sql` → `roles.sql` → `procedures.sql` → `02-seed.sql`
+4. Levanta la API REST backend
+5. Levanta la aplicación Vue frontend
 
-**Tiempo estimado:** 2-3 minutos en primera ejecucion.
+**Tiempo estimado:** 2–3 minutos en primera ejecución.
 
-### 4. Acceder a la aplicacion
-
-Una vez que veas en consola:
-```
-backend-1   | Server running on port 3000
-frontend-1  | VITE ready in X ms
-```
-
-Abre en tu navegador:
-- **Frontend:** http://localhost:5173
-- **Backend API:** http://localhost:3000/api
-- **Base de datos:** localhost:5432
-
-## Arquitectura de Servicios
-
-| Servicio | Puerto | Descripcion | Healthcheck |
-|----------|--------|-------------|-------------|
-| **db** | 5432 | PostgreSQL 16 con datos seed | pg_isready |
-| **db-init** | - | Inicializa esquema y seed (ejecucion unica) | - |
-| **backend** | 3000 | API REST Express + TypeScript | - |
-| **frontend** | 5173 | Aplicacion Vue 3 + Vite | - |
-
-### Dependencias entre servicios
+### 3. Acceder a la aplicación
 
 ```
-frontend → backend → db-init → db
+Frontend:   http://localhost:5173
+Backend API: http://localhost:3000/api
+Base de datos: localhost:5432
 ```
 
-Los servicios se levantan en orden secuencial para garantizar disponibilidad.
+---
 
-## Variables de entorno
+## Variables de Entorno
 
-```
-POSTGRES_USER=proy2
+```env
+POSTGRES_USER=proy3
 POSTGRES_PASSWORD=secret
 POSTGRES_DB=tienda_libros
 JWT_SECRET=a58357173f277af9328127d173d9efe57d8c91f0efdcab66b7a4158af776ac61ca985e7b696ed7ab5c9e8b536a3efbd1f0dae3f05078fe8e14c22192ee12d68d
 ```
 
-Estas variables ya estan configuradas en `docker-compose.yaml`.
+El JWT_SECRET usa 512 bits de entropía criptográfica para evitar ataques de diccionario y fuerza bruta sobre los tokens.
 
-**Nota sobre JWT_SECRET:** El secreto fue generado usando https://jwtsecrets.com/#generator. Se usa un string hexadecimal de 512 bits (128 caracteres) con entropia criptografica en lugar de un nombre o frase porque:
-- Nombres/frases predecibles son vulnerables a ataques de diccionario
-- Secretos con baja entropia permiten fuerza bruta para falsificar tokens
-- JWT_SECRET protege la integridad de TODOS los tokens - si se compromete, un atacante puede crear tokens validos con cualquier payload (ej. rol admin)
-- 512 bits de entropia criptografica hacen computacionalmente imposible adivinar el secreto
+---
 
-## Usuarios de Prueba
+## Usuarios de Prueba (un usuario por cada rol)
 
-El sistema incluye usuarios pre-configurados para probar cada rol:
-
-| Usuario | Password | Rol | Descripcion |
+| Usuario | Password | Rol | Descripción |
 |---------|----------|-----|-------------|
-| **admin** | admin123 | Administrador | Acceso completo al sistema |
-| **vendedor1** | vend123 | Vendedor | Puede registrar ventas y gestionar productos |
-| **cliente1** | cli123 | Cliente | Puede navegar catalogo y realizar compras |
+| **admin** | admin123 | admin | Acceso total al sistema |
+| **gerente1** | ger123 | gerente | Reportes, productos, ventas y compras |
+| **vendedor1** | vend123 | vendedor | Ventas y clientes |
+| **bodeguero1** | bod123 | bodeguero | Inventario y compras a proveedores |
+| **cliente1** | cli123 | cliente | Catálogo, carrito y mis compras |
 
-**Nota:** Tambien puedes registrar nuevos usuarios desde la pagina de registro. Todos los nuevos registros se crean con rol "cliente".
+---
 
-## Troubleshooting (Solucion de Problemas)
+## Seguridad y Roles (Proyecto 3)
 
-### Error: "role proy2 does not exist"
+### Roles en el DBMS (CREATE ROLE)
 
-**Causa:** Docker esta usando un volumen de PostgreSQL de una ejecucion anterior con credenciales diferentes.
+Se crean 5 roles directamente en PostgreSQL mediante `database/roles.sql`. Cada rol tiene permisos granulares via `GRANT`/`REVOKE`:
 
-**Solucion:**
+| Rol DBMS | Tablas accesibles | Operaciones permitidas |
+|---|---|---|
+| `rol_admin` | **Todas las tablas** | `SELECT`, `INSERT`, `UPDATE`, `DELETE` |
+| `rol_gerente` | Todas las tablas | `SELECT` en todo; `INSERT`, `UPDATE` en `producto`, `venta`, `compra_proveedor` |
+| `rol_vendedor` | `producto`, `cliente`, `categoria` | `SELECT`; `INSERT` en `venta`, `detalle_venta` |
+| `rol_bodeguero` | `producto`, `compra_proveedor`, `detalle_compra` | `SELECT`; `UPDATE (stock)` en `producto`; `INSERT` en compras |
+| `rol_cliente` | `producto`, `categoria`, `editorial`, `autor` | `SELECT`; `INSERT` en `venta`, `detalle_venta` |
+
+Los roles se crean con:
+```sql
+CREATE ROLE rol_admin;
+CREATE ROLE rol_gerente;
+CREATE ROLE rol_vendedor;
+CREATE ROLE rol_bodeguero;
+CREATE ROLE rol_cliente;
+```
+
+### Rutas Protegidas por Rol (Frontend + Backend)
+
+| Ruta | Roles con acceso |
+|------|-----------------|
+| `/dashboard` | admin, gerente, vendedor |
+| `/productos` | admin, gerente, bodeguero |
+| `/clientes` | admin, vendedor |
+| `/ventas` | admin, vendedor, gerente |
+| `/compras` | admin, gerente, bodeguero |
+| `/reportes/*` | admin, vendedor, gerente |
+| `/catalogo` | Todos (incluyendo sin login) |
+| `/carrito` | cliente |
+| `/mis-compras` | cliente |
+
+El backend valida el rol en cada endpoint mediante el middleware `roleGuard(...)`. El frontend oculta los links de navegación y redirige al rol correspondiente si intenta acceder a una ruta no autorizada.
+
+---
+
+## Stored Procedures (Proyecto 3)
+
+Definidos en `database/procedures.sql`, invocados desde rutas Express vía `CALL sp_nombre(...)`:
+
+| SP | Ruta que lo invoca | Parámetros OUT | Transacción |
+|----|--------------------|----------------|-------------|
+| `sp_registrar_venta(cliente_id, empleado_id, detalle JSON, INOUT resultado)` | `POST /api/ventas/sp` | ✅ `INOUT p_resultado TEXT` | ✅ ROLLBACK en EXCEPTION |
+| `sp_registrar_compra_proveedor(proveedor_id, detalle JSON, INOUT resultado)` | `POST /api/compras/sp` | ✅ `INOUT p_resultado TEXT` | ✅ ROLLBACK en EXCEPTION |
+| `sp_actualizar_stock(producto_id, cantidad, operacion, INOUT resultado)` | `POST /api/productos/:id/stock` | ✅ `INOUT p_resultado TEXT` | ✅ ROLLBACK en EXCEPTION |
+| `sp_reporte_ventas_periodo(fecha_inicio, fecha_fin, INOUT resultado JSON)` | `GET /api/reportes/ventas-periodo` | ✅ `INOUT p_resultado JSON` | — |
+| `sp_crear_cliente(nombre, email, tel, dir, usuario_id, INOUT resultado)` | `POST /api/clientes/sp` | ✅ `INOUT p_resultado TEXT` | ✅ ROLLBACK en EXCEPTION |
+
+Todos los SPs usan parámetros `INOUT` y manejan excepciones con `EXCEPTION WHEN OTHERS THEN ROLLBACK; RAISE;`.
+
+---
+
+## ORM con Prisma (Proyecto 3)
+
+Se usa **Prisma** para al menos 3 operaciones CRUD:
+
+| Módulo | Archivo | Operaciones Prisma |
+|--------|---------|-------------------|
+| **Productos** | `producto.routes.ts` | `findMany` con filtros (search, categoria), `findUnique` |
+| **Categorías** | `categoria.routes.ts` | `findMany`, `create`, `update`, `delete` |
+| **Usuarios** | `usuario.routes.ts` | `findMany`, `findUnique`, `create`, `update`, `delete` |
+
+Las consultas avanzadas (reportes, JOINs complejos, SPs) usan `pg` raw SQL.
+
+---
+
+## Arquitectura de Servicios
+
+```
+frontend → backend → db-init → db
+```
+
+| Servicio | Puerto | Descripción |
+|---------|--------|-------------|
+| `db` | 5432 | PostgreSQL 16 |
+| `db-init` | — | Ejecuta DDL → roles → procedures → seed |
+| `backend` | 3000 | API REST Express + TypeScript + Prisma |
+| `frontend` | 5173 | Vue 3 + Vite |
+
+---
+
+## Troubleshooting
+
+### Error: "role proy3 does not exist" o similar
+
 ```bash
-# Detener servicios y eliminar volumenes
 docker compose down -v
-
-# Verificar que no queden volumenes
-docker volume ls | grep proyecto2
-
-# Si aparece algun volumen, eliminarlo manualmente
-docker volume rm proyecto2-db_pgdata
-
-# Levantar de nuevo
 docker compose up --build
 ```
 
 ### Error: "Port 5432 is already in use"
 
-**Causa:** Ya tienes PostgreSQL corriendo en tu sistema.
-
-**Solucion:**
 ```bash
-# Windows: Detener servicio PostgreSQL
+# Windows
 net stop postgresql-x64-16
-
-# Linux/Mac: Detener PostgreSQL
-sudo service postgresql stop
-
-# O cambiar puerto en docker-compose.yaml
-ports:
-  - "5433:5432"  # Usar 5433 en lugar de 5432
+# o cambiar puerto en docker-compose.yaml a 5433:5432
 ```
 
-### Frontend no carga / Muestra pantalla en blanco
+### Frontend en blanco
 
-**Solucion:**
 ```bash
-# Reconstruir contenedores sin cache
 docker compose build --no-cache
 docker compose up
 ```
 
-### Base de datos sin datos seed
+---
 
-**Solucion:**
-```bash
-# Forzar reinicializacion completa
-docker compose down -v
-docker compose up --build
-```
-
-## Funcionalidades del Sistema
-
-### Autenticacion y Autorizacion
-- Login/logout con JWT
-- 3 roles de usuario: admin, vendedor, cliente
-- Proteccion de rutas segun rol
-- Sesiones persistentes con localStorage
-
-### Gestion de Inventario
-- **CRUD Productos:** Crear, editar, eliminar productos (libros, mangas, comics, revistas)
-- **Categorias y Editoriales:** Clasificacion por tipo y editorial
-- **Autores:** Relacion muchos-a-muchos entre productos y autores
-- **Stock:** Control de inventario en tiempo real
-- **Imagenes:** URLs de portadas con fallback visual
-
-### Gestion de Clientes
-- **CRUD Clientes:** Alta, edicion y eliminacion de clientes
-- **Datos completos:** Nombre, email, telefono, direccion
-- **Vinculacion con usuarios:** Clientes pueden tener cuenta de login
-
-### Sistema de Ventas
-- **Registro de ventas:** Diferenciacion entre venta web y venta fisica por empleado
-- **Carrito de compras:** Sistema completo para clientes web
-- **Detalle de venta:** Items con cantidad y precio unitario
-- **Transacciones:** BEGIN/COMMIT/ROLLBACK explicito en registro de ventas
-- **Historial:** Consulta de ventas pasadas con detalle expandible
-- **Filtrado:** Por vendedor (web o empleado especifico)
-
-### Compras a Proveedores
-- **Registro de compras:** Alta de compras con detalle
-- **Proveedores:** Gestion de proveedores y contactos
-- **Historial:** Consulta de compras anteriores
-
-### Dashboard y Reportes
-- **Top 10 productos mas vendidos:** Grafico de barras con Chart.js
-- **Ventas por mes:** Grafico de lineas con tendencia mensual
-- **Stock bajo:** Productos con 5 o menos unidades disponibles
-- **Productos no vendidos:** Inventario sin movimiento
-- **Ranking de clientes:** CTE con clientes ordenados por gasto total
-- **Clientes sobre promedio:** Reporte de clientes que gastaron mas que el promedio
-- **Exportar CSV:** Descarga de reporte de ventas completo
-
-### Catalogo Publico
-- **Navegacion sin login:** Acceso libre al catalogo
-- **Busqueda:** Por titulo o autor
-- **Filtros:** Por tipo de producto (libro, manga, comic, revista)
-- **Vista de producto:** Dialog con detalles completos al hacer click
-- **Agregar al carrito:** Para usuarios autenticados como cliente
-- **Badges:** Stock disponible y tipo de producto
-
-### Caracteristicas Tecnicas
-- **Base de datos:**
-  - Vista `vista_producto_completo` para consultas optimizadas
-  - 5 indices para queries frecuentes (fecha, categoria, editorial, cliente, proveedor)
-  - Consultas con JOINs, subqueries, GROUP BY/HAVING, CTEs
-  - 25 usuarios seed, 36 productos, 25 ventas de ejemplo
-- **Frontend:**
-  - Animaciones GSAP en transiciones
-  - Components shadcn-vue
-  - Responsive design (mobile-first)
-  - SweetAlert2 para notificaciones
-- **Backend:**
-  - Arquitectura REST
-  - Middleware de autenticacion JWT
-  - Guards de roles
-  - Manejo de errores centralizado
-
-## Documentacion de Base de Datos
-
-- [Modelo relacional y normalizacion (3FN)](assets/docs/modelo_relacional_normalizacion.md)
-- [Diagrama ER](assets/img/der%20completo%20bases%20de%20datos%20proyecto%202.png)
-
-### Esquema Principal
-
-**Entidades:**
-- `usuario` - Autenticacion y roles
-- `cliente` - Datos de clientes
-- `empleado` - Datos de empleados
-- `producto` - Inventario de libros/mangas
-- `categoria` - Clasificacion de productos
-- `editorial` - Editoriales
-- `autor` - Autores de productos
-- `producto_autor` - Relacion M:N productos-autores
-- `venta` - Registro de ventas
-- `detalle_venta` - Items de cada venta
-- `proveedor` - Proveedores
-- `compra_proveedor` - Compras realizadas
-- `detalle_compra` - Items de cada compra
-
-### Indices Creados
-
-```sql
-CREATE INDEX idx_venta_fecha ON venta(fecha);
-CREATE INDEX idx_producto_categoria ON producto(categoria_id);
-CREATE INDEX idx_producto_editorial ON producto(editorial_id);
-CREATE INDEX idx_venta_cliente ON venta(cliente_id);
-CREATE INDEX idx_compra_proveedor ON compra_proveedor(proveedor_id);
-```
-
-## Comandos Utiles
+## Comandos Útiles
 
 ```bash
-# Ver logs de un servicio especifico
-docker compose logs backend
-docker compose logs frontend
-docker compose logs db
-
 # Ver logs en tiempo real
 docker compose logs -f backend
 
 # Reiniciar un servicio
 docker compose restart backend
 
-# Detener servicios
-docker compose down
+# Reinicio completo con borrado de datos
+docker compose down -v && docker compose up --build
 
-# Detener y eliminar volumenes (reinicio completo)
-docker compose down -v
+# Conectar a la base de datos
+docker compose exec db psql -U proy3 -d tienda_libros
 
-# Reconstruir sin cache
-docker compose build --no-cache
+# Verificar roles creados en PostgreSQL
+docker compose exec db psql -U proy3 -d tienda_libros -c "\du"
 
-# Ver estado de servicios
-docker compose ps
-
-# Entrar a contenedor de base de datos
-docker compose exec db psql -U proy2 -d tienda_libros
-
-# Ejecutar query SQL directamente
-docker compose exec db psql -U proy2 -d tienda_libros -c "SELECT * FROM usuario;"
+# Verificar stored procedures
+docker compose exec db psql -U proy3 -d tienda_libros -c "\df sp_*"
 ```
+
+---
 
 ## Estructura del Proyecto
 
@@ -326,26 +244,35 @@ docker compose exec db psql -U proy2 -d tienda_libros -c "SELECT * FROM usuario;
 proyecto2-db/
 ├── backend/
 │   ├── src/
-│   │   ├── config/         # Configuracion (DB, env)
-│   │   ├── middleware/     # Auth, validacion
-│   │   ├── routes/         # Endpoints API
-│   │   └── queries/        # SQL queries
-│   ├── index.ts           # Entry point
+│   │   ├── config/         # db.ts (pg pool), prisma.ts (Prisma client)
+│   │   ├── middleware/     # auth.ts (JWT + roleGuard)
+│   │   ├── routes/         # Endpoints API (auth, productos, ventas, etc.)
+│   │   └── queries/        # SQL raw queries
+│   ├── prisma/
+│   │   └── schema.prisma   # Mapeo ORM del esquema
+│   ├── index.ts
 │   └── Dockerfile
 ├── frontend/
 │   ├── src/
-│   │   ├── components/    # Componentes Vue
-│   │   ├── views/         # Paginas/vistas
-│   │   ├── services/      # API clients
-│   │   ├── stores/        # Pinia stores
-│   │   └── composables/   # Hooks reutilizables
+│   │   ├── components/     # Navbar, UI components
+│   │   ├── views/          # Páginas por módulo
+│   │   ├── router/         # Rutas protegidas por rol
+│   │   ├── stores/         # auth.store.ts (Pinia)
+│   │   └── services/       # api.ts (axios)
 │   └── Dockerfile
 ├── database/
-│   ├── 01-ddl.sql        # Esquema de base de datos
-│   └── 02-seed.sql       # Datos iniciales
-├── assets/
-│   ├── docs/             # Documentacion
-│   └── img/              # Diagramas
-├── docker-compose.yaml   # Orquestacion de servicios
+│   ├── 01-ddl.sql          # Esquema de tablas
+│   ├── roles.sql           # CREATE ROLE + GRANT/REVOKE (P3)
+│   ├── procedures.sql      # 5 Stored Procedures (P3)
+│   └── 02-seed.sql         # Datos + 5 usuarios de prueba
+├── docker-compose.yaml
+├── .env.example
 └── README.md
 ```
+
+---
+
+## Documentación Adicional
+
+- [Modelo relacional y normalización (3FN)](assets/docs/modelo_relacional_normalizacion.md)
+- [Diagrama ER](assets/img/der%20completo%20bases%20de%20datos%20proyecto%202.png)

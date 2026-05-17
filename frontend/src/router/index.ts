@@ -17,12 +17,12 @@ const router = createRouter({
     {
       path: '/dashboard',
       component: () => import('../views/DashboardView.vue'),
-      meta: { requiresAuth: true, roles: ['admin', 'vendedor'] },
+      meta: { requiresAuth: true, roles: ['admin', 'vendedor', 'gerente'] },
     },
     {
       path: '/productos',
       component: () => import('../views/ProductosView.vue'),
-      meta: { requiresAuth: true, roles: ['admin', 'vendedor'] },
+      meta: { requiresAuth: true, roles: ['admin', 'gerente', 'bodeguero'] },
     },
     {
       path: '/clientes',
@@ -32,32 +32,32 @@ const router = createRouter({
     {
       path: '/ventas',
       component: () => import('../views/VentasView.vue'),
-      meta: { requiresAuth: true, roles: ['admin', 'vendedor'] },
+      meta: { requiresAuth: true, roles: ['admin', 'vendedor', 'gerente'] },
     },
     {
       path: '/ventas/:id',
       component: () => import('../views/VentaDetalleView.vue'),
-      meta: { requiresAuth: true, roles: ['admin', 'vendedor'] },
+      meta: { requiresAuth: true, roles: ['admin', 'vendedor', 'gerente'] },
     },
     {
       path: '/compras',
       component: () => import('../views/ComprasView.vue'),
-      meta: { requiresAuth: true, roles: ['admin', 'vendedor'] },
+      meta: { requiresAuth: true, roles: ['admin', 'gerente', 'bodeguero'] },
     },
     {
       path: '/compras/:id',
       component: () => import('../views/CompraDetalleView.vue'),
-      meta: { requiresAuth: true, roles: ['admin', 'vendedor'] },
+      meta: { requiresAuth: true, roles: ['admin', 'gerente', 'bodeguero'] },
     },
     {
       path: '/reportes/productos-no-vendidos',
       component: () => import('../views/ProductosNoVendidosView.vue'),
-      meta: { requiresAuth: true, roles: ['admin', 'vendedor'] },
+      meta: { requiresAuth: true, roles: ['admin', 'vendedor', 'gerente'] },
     },
     {
       path: '/reportes/clientes-sobre-promedio',
       component: () => import('../views/ClientesSobrePromedioView.vue'),
-      meta: { requiresAuth: true, roles: ['admin', 'vendedor'] },
+      meta: { requiresAuth: true, roles: ['admin', 'vendedor', 'gerente'] },
     },
   ],
 })
@@ -69,6 +69,8 @@ router.beforeEach((to) => {
   }
   if (to.meta.roles && !(to.meta.roles as string[]).includes(auth.rol)) {
     if (auth.rol === 'cliente') return '/catalogo'
+    if (auth.rol === 'bodeguero') return '/productos'
+    if (auth.rol === 'admin' || auth.rol === 'vendedor' || auth.rol === 'gerente') return '/dashboard'
     return '/login'
   }
 })
