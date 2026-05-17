@@ -1,6 +1,6 @@
 # Tienda de Libros y Mangas
 
-> **Nota de Evaluación:** El Proyecto 2 de eCommerce se encuentra en la rama `proyecto2-web`, mientras que el Proyecto 3 de Bases de Datos se encuentra en la rama `proyecto3-bases`. El enlace al repositorio con la rama correspondiente se adjuntó en la entrega.
+> **Nota de Evaluación:** El Proyecto 2 de eCommerce se encuentra en la rama `proyecto2-web`, mientras que el Proyecto 3 de Bases de Datos se encuentra en la rama `proyecto-3`. El enlace al repositorio con la rama correspondiente se adjuntó en la entrega.
 
 Aplicacion web fullstack para gestionar inventario y ventas de una tienda de libros y mangas.
 
