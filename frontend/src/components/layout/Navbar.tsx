@@ -106,8 +106,8 @@ export default function Navbar() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative hidden h-9 w-9 rounded-full transition-all duration-200 hover:scale-105 hover:ring-2 hover:ring-primary/20 md:inline-flex">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold">
+            <Button variant="ghost" className="relative hidden h-9 w-9 overflow-hidden rounded-full p-0 transition-all duration-200 hover:scale-105 hover:ring-2 hover:ring-primary/20 md:flex">
+              <div className="flex h-full w-full items-center justify-center bg-primary text-primary-foreground font-bold leading-none">
                 {auth.user?.username?.charAt(0).toUpperCase()}
               </div>
             </Button>

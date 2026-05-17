@@ -122,10 +122,16 @@ export default function DashboardPage() {
           <Card className="dash-card">
             <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2">Stock Bajo <Badge variant="destructive" className="text-[10px]">{stockBajo.length}</Badge></CardTitle></CardHeader>
             <CardContent>
+              <div className="grid grid-cols-12 gap-2 px-2 pb-2 mb-2 border-b text-xs font-semibold text-muted-foreground">
+                <div className="col-span-9">Producto</div>
+                <div className="col-span-3 text-right">Stock</div>
+              </div>
               <MiniSlider items={stockBajo} label="productos" renderItem={(p) => (
-                <div key={p.id_producto} className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-muted/50 transition-colors">
-                  <span className="text-sm font-medium truncate max-w-[70%]">{p.titulo}</span>
-                  <Badge variant="destructive" className="text-[10px]">{p.stock}</Badge>
+                <div key={p.id_producto} className="grid grid-cols-12 gap-2 items-center py-1.5 px-2 rounded hover:bg-muted/50 transition-colors">
+                  <span className="col-span-9 text-sm font-medium truncate">{p.titulo}</span>
+                  <div className="col-span-3 text-right">
+                    <Badge variant="destructive" className="text-[10px]">{p.stock}</Badge>
+                  </div>
                 </div>
               )} />
             </CardContent>
@@ -135,11 +141,16 @@ export default function DashboardPage() {
           <Card className="dash-card">
             <CardHeader className="pb-2"><CardTitle className="text-sm">Ranking Clientes (CTE)</CardTitle></CardHeader>
             <CardContent>
+              <div className="grid grid-cols-12 gap-2 px-2 pb-2 mb-2 border-b text-xs font-semibold text-muted-foreground">
+                <div className="col-span-6">Cliente</div>
+                <div className="col-span-3 text-right">Compras</div>
+                <div className="col-span-3 text-right">Total</div>
+              </div>
               <MiniSlider items={ranking} label="clientes" renderItem={(c) => (
-                <div key={c.id_cliente} className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-muted/50 transition-colors">
-                  <span className="text-sm font-medium truncate max-w-[45%]">{c.nombre}</span>
-                  <span className="text-xs text-muted-foreground">{c.cantidad_compras} compras</span>
-                  <span className="text-sm font-mono font-bold text-primary">Q{Number(c.total_gastado).toFixed(2)}</span>
+                <div key={c.id_cliente} className="grid grid-cols-12 gap-2 items-center py-1.5 px-2 rounded hover:bg-muted/50 transition-colors">
+                  <span className="col-span-6 text-sm font-medium truncate">{c.nombre}</span>
+                  <span className="col-span-3 text-xs text-muted-foreground text-right">{c.cantidad_compras} compras</span>
+                  <span className="col-span-3 text-sm font-mono font-bold text-primary text-right">Q{Number(c.total_gastado).toFixed(2)}</span>
                 </div>
               )} />
             </CardContent>
