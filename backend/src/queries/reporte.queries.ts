@@ -1,7 +1,8 @@
 // Subquery #1: Productos que nunca se han vendido (10 pts)
 export const PRODUCTOS_NO_VENDIDOS = `
-SELECT p.id_producto, p.titulo, p.precio, p.stock
+SELECT p.id_producto, p.titulo, p.precio, p.stock, c.tipo, c.nombre AS categoria
 FROM producto p
+JOIN categoria c ON p.categoria_id = c.id_categoria
 WHERE NOT EXISTS (
 	SELECT 1 FROM detalle_venta dv WHERE dv.producto_id = p.id_producto
 )
