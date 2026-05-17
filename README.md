@@ -1,5 +1,7 @@
 # Tienda de Libros y Mangas
 
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/asanabria-2021067/proyecto2-db)
+
 Aplicacion web fullstack para gestionar inventario y ventas de una tienda de libros y mangas.
 
 ## Stack Tecnologico
@@ -264,6 +266,18 @@ docker compose up --build
   - Middleware de autenticacion JWT
   - Guards de roles
   - Manejo de errores centralizado
+
+## Uso de React Hooks (Requisito)
+
+Como parte de la migracion y requerimientos, se implementaron extensivamente los hooks de React para manejar el ciclo de vida y estado de la aplicacion:
+
+- **`useState`**: Utilizado en todos los componentes para el manejo de estado local (ej. inputs de formularios, modales abiertos/cerrados, paginacion).
+- **`useEffect`**: Empleado para fetching de datos al montar componentes (llamadas a la API) y para sincronizar animaciones de GSAP con el DOM renderizado.
+- **`useReducer`**: Implementado en `AuthContext` (estados `LOGIN`, `LOGOUT`) y `CartContext` (acciones `ADD_ITEM`, `REMOVE_ITEM`, `CLEAR_CART`, `SYNC_STOCK`) para manejar logica de estado compleja y predecible.
+- **`useContext`**: Extraido en custom hooks (`useAuth`, `useCart`, `useTheme`) para consumir el estado global sin prop-drilling en la aplicacion.
+- **`useMemo`**: Utilizado para optimizar renderizados costosos, como el filtrado interactivo del catalogo por titulo y tipo, y para calcular la data derivada de los graficos de Recharts.
+- **`useCallback`**: Empleado para memorizar funciones que se pasan como dependencias o props (ej. handlers de agregar al carrito o descargar CSV), evitando re-renders innecesarios.
+- **Custom Hooks**: Se desarrollo el hook `useSwal` para abstraer y estandarizar la configuracion de SweetAlert2 en notificaciones de exito, error y confirmacion.
 
 ## Documentacion de Base de Datos
 
