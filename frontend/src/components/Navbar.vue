@@ -47,6 +47,27 @@ const adminLinks = [
   { to: '/catalogo', label: 'Catalogo' },
 ]
 
+const gerenteLinks = [
+  { to: '/dashboard', label: 'Dashboard' },
+  { to: '/productos', label: 'Productos' },
+  { to: '/ventas', label: 'Ventas' },
+  { to: '/compras', label: 'Compras' },
+  { to: '/reportes/productos-no-vendidos', label: 'No Vendidos' },
+  { to: '/reportes/clientes-sobre-promedio', label: 'Top Clientes' },
+]
+
+const vendedorLinks = [
+  { to: '/dashboard', label: 'Dashboard' },
+  { to: '/ventas', label: 'Ventas' },
+  { to: '/clientes', label: 'Clientes' },
+  { to: '/catalogo', label: 'Catalogo' },
+]
+
+const bodegueroLinks = [
+  { to: '/productos', label: 'Productos' },
+  { to: '/compras', label: 'Compras' },
+]
+
 const clienteLinks = [
   { to: '/catalogo', label: 'Catalogo' },
   { to: '/carrito', label: 'Carrito' },
@@ -54,13 +75,17 @@ const clienteLinks = [
 ]
 
 const visibleLinks = computed(() => {
+  if (auth.rol === 'admin') return adminLinks
+  if (auth.rol === 'gerente') return gerenteLinks
+  if (auth.rol === 'vendedor') return vendedorLinks
+  if (auth.rol === 'bodeguero') return bodegueroLinks
   if (auth.rol === 'cliente') return clienteLinks
-  if (auth.rol === 'admin' || auth.rol === 'vendedor') return adminLinks
   return []
 })
 
 const brandTarget = computed(() => {
-  if (auth.rol === 'admin' || auth.rol === 'vendedor') return '/dashboard'
+  if (auth.rol === 'admin' || auth.rol === 'vendedor' || auth.rol === 'gerente') return '/dashboard'
+  if (auth.rol === 'bodeguero') return '/productos'
   return '/catalogo'
 })
 
