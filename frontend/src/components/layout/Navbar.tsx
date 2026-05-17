@@ -6,7 +6,7 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
-import { useConfirm } from '@/hooks/useSwal'
+import { showConfirm } from '@/hooks/useSwal'
 import { ShoppingCart, Menu, X, Sun, Moon } from 'lucide-react'
 
 const adminLinks = [
@@ -50,7 +50,7 @@ export default function Navbar() {
   }, [location.pathname])
 
   const handleLogout = useCallback(async () => {
-    const result = await useConfirm({
+    const result = await showConfirm({
       title: 'Cerrar sesion?',
       text: 'Se cerrara tu sesion actual.',
       icon: 'question',
